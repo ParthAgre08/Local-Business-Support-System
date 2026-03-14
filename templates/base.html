@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/body.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/herosection.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/features.css')}}">
+</head>
+<body>
+<header>
+    {% block alert%}{%endblock%}
+    <nav class="navbar">
+
+        <!-- Logo -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
+            <span>Local Business Hub</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/business">Businesses</a></li>
+            <li><a href="/add-business">Add Business</a></li>
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+
+        <!-- Login Button -->
+        <div class="nav-btn">
+            <a href="/login" class="login-btn">Login</a>
+        </div>
+
+    </nav>
+</header>
+    {% block content%}  {% endblock%}
+
+ <footer class="footer">
+
+    <div class="footer-container">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+            <h2>Local Business Hub</h2>
+            <p>Connecting people with trusted local businesses in their community.</p>
+        </div>
+
+        <!-- Connect With Us -->
+        <div class="footer-connect">
+            <h3>Connect With Us</h3>
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Twitter</a>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer-contact">
+            <h3>Contact</h3>
+            <p>Email: support@localhub.com</p>
+            <p>Phone: +91 9876543210</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 Local Business Hub | All Rights Reserved</p>
+    </div>
+
+</footer>
+</body>
+</html>

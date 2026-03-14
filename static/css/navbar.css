@@ -1,0 +1,68 @@
+/* Navbar Container */
+.navbar{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    background: linear-gradient(90deg,#1E3A5F,#2BB3A3,#1E3A5F);
+    color:white;
+    border-radius: 10px;
+    border-color: rgb(235, 148, 255);
+    font-family: 'Poppins', sans-serif;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Logo Section */
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.logo img{
+   
+    width:60px;
+border-radius:8px;
+/* background:transparent; */
+}
+
+/* Navigation Links */
+.nav-links{
+    list-style:none;
+    display:flex;
+    gap:30px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:white;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.nav-links a:hover{
+    color:#84fff3;
+    text-shadow:0 0 30px rgb(255, 255, 255);
+transition:0.3s;
+}
+
+/* Login Button */
+.login-btn{
+    padding:8px 18px;
+    background:linear-gradient(90deg,rgb(49, 140, 156), rgb(100, 205, 193),rgb(49, 140, 156));
+    color: aliceblue;
+    /* border: 1px solid;    */
+    border-radius:5px;
+    text-decoration:none;
+    font-weight:bold;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover{
+   background:linear-gradient(90deg,rgb(50, 220, 198),rgb(151, 234, 237));
+    box-shadow: 0 0 20px rgb(221, 245, 255);
+    transform: translateY(-3px);
+}  

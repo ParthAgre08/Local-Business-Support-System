@@ -1,13 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Business Support System</title>
-</head>
-<body>
-    <form action="/" method="POST">
-        <button type = "submit">click here</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content%}
+
+
+<div class="hero">
+
+    <div class="img">
+        <img src="{{ url_for('static', filename='images/hero1.png') }}" alt="Local Businesses">
+    </div>
+
+    <div class="content">
+        <h1>Discover & Support Local Businesses</h1>
+
+        <p>
+            Explore trusted shops, services, and businesses in your area.
+            Our platform helps customers connect with local entrepreneurs
+            and discover nearby services easily.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#" class="btn-primary">Explore Businesses</a>
+            <a href="#" class="btn-secondary">Add Your Business</a>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<section class="features">
+
+    <div class="features-heading">
+        <h2>Platform Features</h2>
+        <p>Our platform helps customers discover and connect with local businesses easily.</p>
+    </div>
+
+    <div class="features-container">
+
+
+        <a class="redirect" href="/search">
+            <div class="feature-card">
+                <div class="icon">🔎</div>
+                <h3>Discover Local Businesses</h3>
+                <p>Find nearby shops, services, and businesses in your area quickly and easily.</p>
+            </div>
+        </a>
+
+        <a class="redirect" href="/addbusiness">
+        <div class="feature-card">  
+            <div class="icon">🏪</div>
+
+            <h3>Business Listing Platform</h3>
+
+            <p>Local entrepreneurs can add their businesses and reach more customers online.</p>
+        </div> </a>
+
+        <a class="redirect" href="/category">
+        <div class="feature-card">
+            <div class="icon">📂</div>
+
+            <h3>Smart Categories</h3>
+
+            <p>Browse businesses by categories like restaurants, services, electronics, and more.</p>
+        </div></a>
+
+    </div>
+
+</section>
+<form action="/" method="POST">
+    <button type="submit">click here</button>
+</form>
+{%endblock%}
