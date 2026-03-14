@@ -41,11 +41,12 @@
 }
 
 .hero-buttons a{
+    display: inline-block;
     padding:15px 28px;
     text-decoration:none;
     margin-right:10px;
     border-radius:6px;
-}
+}       
 
 .btn-primary{
     background:linear-gradient(90deg,rgb(49, 140, 156), rgb(100, 205, 193),rgb(49, 140, 156));
@@ -57,6 +58,7 @@
     transition: all 0.3s ease;
 }
 
+
 .btn-secondary{
     border:2px solid rgb(49, 140, 156);
     color:rgb(49, 140, 156);
@@ -66,3 +68,9 @@
     box-shadow: 0 0 20px rgb(221, 245, 255);
     transform: translateY(-30px);
 } */
+
+.hero-buttons a:hover{
+    transform: translateY(-3px);
+    transition: 0.3s;
+    box-shadow:0 0 20px rgb(115, 226, 246); 
+}

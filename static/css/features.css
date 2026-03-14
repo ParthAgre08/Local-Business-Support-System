@@ -41,14 +41,16 @@
 
 .feature-card{
     background:white;
+    box-shadow: 0 0 20px rgb(177, 227, 252);
     padding:30px;
     border-radius:10px;
     font-size: 20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;  
 }
 .feature-card:hover{
     transform: translateY(-8px);
     transition: 0.3s;
+    box-shadow:0 0 20px rgb(115, 226, 246);
 }
 
 .feature-card .icon{
@@ -61,4 +63,4 @@
     text-decoration:none;
     color:black;    
 }
- 
+
