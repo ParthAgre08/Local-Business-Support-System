@@ -40,7 +40,7 @@
 
         <a class="redirect" href="/search">
             <div class="feature-card">
-                <div class="icon">🔎</div>
+                <div class="icon1"><img class="icon" src="{{url_for('static',filename='images/search2.png')}}" alt=""></div>
                 <h3>Discover Local Businesses</h3>
                 <p>Find nearby shops, services, and businesses in your area quickly and easily.</p>
             </div>
@@ -48,7 +48,7 @@
 
         <a class="redirect" href="/addbusiness">
             <div class="feature-card">
-                <div class="icon">🏪</div>
+                <div class="icon1"><img class="icon" src="{{url_for('static',filename='images/check.png')}}" alt=""></div>
 
                 <h3>Business Listing Platform</h3>
 
@@ -58,7 +58,7 @@
 
         <a class="redirect" href="/category">
             <div class="feature-card">
-                <div class="icon">📂</div>
+                <div class="icon1"><img class="icon" src="{{url_for('static',filename='images/category.png')}}" alt="category_img"></div>
 
                 <h3>Smart Categories</h3>
 
@@ -81,13 +81,13 @@
         <div class="row">
 
             <div class="point">
-                <img src="{{ url_for('static', filename='images/economy.png') }}" alt="economy">  
-                ✔ Support Local Economy
+                <img src="{{ url_for('static', filename='images/economy.png') }}" alt="economy">
+                Support Local Economy
             </div>
 
             <div class="point">
-                <img class="second" src="{{ url_for('static', filename='images/search.png') }}" alt="search">  
-                ✔ Easy Business Discovery
+                <img class="second" src="{{ url_for('static', filename='images/search.png') }}" alt="search">
+                Easy Business Discovery
             </div>
 
         </div>
@@ -95,16 +95,32 @@
         <div class="row">
 
             <div class="point">
-                ✔ Simple Business Registration
+                <img class="second" src="{{ url_for('static', filename='images/register.png') }}" alt="register">
+                Simple Business Registration
             </div>
 
             <div class="point">
-                ✔ User Friendly Platform
+                <img class="second" src="{{ url_for('static', filename='images/user-friendly.png') }}"
+                    alt="user-friendly">
+                User Friendly Platform
             </div>
 
         </div>
 
     </div>
+
+</section>
+
+<section class="cta">
+
+    <h1>Own a Local Business?</h1>
+
+    <p>
+        Join Local Business Hub today and showcase your business to
+        thousands of customers in your area.
+    </p>
+
+    <a href="/addbusiness" class="cta-btn">Add Your Business</a>
 
 </section>
 <form action="/" method="POST">

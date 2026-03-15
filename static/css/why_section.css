@@ -10,18 +10,15 @@
 }
 
 .why img{
-height: 80px;
-width: 80px;
+height: 65px;
+width: 65px;
 }
-.second{
-height: 60px;
-width: 60px;
-}
+
 
 
 .why p{
     font-size: 20px;
-    margin-bottom:50px;
+    margin-bottom:60px;
 }
 .why-points {
     margin-top: 40px;
@@ -43,7 +40,7 @@ width: 60px;
 
 .point {
     background: white;
-    padding: 70px 100px;
+    padding: 55px 75px;
     border-radius: 10px;
     width: 320px;
     font-size: 20px;
