@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{url_for('static',filename='css/features.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/why_section.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/calltoaction.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/login.css')}}">
 </head>
 <body>
 <header>
@@ -34,9 +35,10 @@
             <li><a href="/contact">Contact</a></li>
         </ul>
 
-        <!-- Login Button -->
-        <div class="nav-btn">
+        <!-- Auth Buttons -->
+        <div class="nav-auth">
             <a href="/login" class="login-btn">Login</a>
+            <a href="/register" class="register-btn">Register</a>
         </div>
 
     </nav>

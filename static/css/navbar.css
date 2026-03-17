@@ -49,20 +49,38 @@ border-radius:8px;
 transition:0.3s;
 }
 
-/* Login Button */
-.login-btn{
-    padding:8px 18px;
-    background:linear-gradient(90deg,rgb(49, 140, 156), rgb(100, 205, 193),rgb(49, 140, 156));
-    color: aliceblue;
-    /* border: 1px solid;    */
-    border-radius:5px;
-    text-decoration:none;
-    font-weight:bold;
-    transition: all 0.3s ease;
+/* Auth Buttons */
+.nav-auth {
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
-.login-btn:hover{
-   background:linear-gradient(90deg,rgb(50, 220, 198),rgb(151, 234, 237));
+.login-btn, .register-btn {
+    padding: 8px 18px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-btn {
+    background: linear-gradient(90deg, rgb(49, 140, 156), rgb(100, 205, 193), rgb(49, 140, 156));
+    color: aliceblue;
+    border: 2px solid transparent;
+}
+
+.register-btn {
+    background: transparent;
+    border: 2px solid rgb(100, 205, 193);
+    color: rgb(151, 234, 237);
+}
+
+.login-btn:hover, .register-btn:hover {
+    background: linear-gradient(90deg, rgb(50, 220, 198), rgb(151, 234, 237));
     box-shadow: 0 0 20px rgb(221, 245, 255);
     transform: translateY(-3px);
+    color: #1E3A5F;
+    border-color: transparent;
 }  

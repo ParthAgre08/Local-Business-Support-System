@@ -13,6 +13,19 @@ def main():
         return redirect(url_for("home"))
     return render_template("main.html")
 
+
+@app.route("/login",methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        session["Email"] = request.form.get("Email")
+        session["password"] = request.form.get("password")
+
+    return render_template("login.html")
+
+@app.route("/register",methods=["GET","POST"])
+def register():
+    return render_template("register.html")
+
 @app.route("/home")
 def home():
     return render_template("home.html")
