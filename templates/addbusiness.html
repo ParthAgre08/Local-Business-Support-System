@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="addbusiness-wrapper">
+    <div class="addbusiness-card">
+        <h2 class="addbusiness-title">Add New Business</h2>
+        
+        <form action="/addbusiness" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="name">Business Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter business name" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <div class="input-wrapper">
+                    <input type="text" id="category" name="category" class="form-control" placeholder="e.g. Restaurant, Retail, Service" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <div class="input-wrapper">
+                    <input type="text" id="location" name="location" class="form-control" placeholder="Enter business location/address" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <div class="input-wrapper">
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Describe your business..." required></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Business Image</label>
+                <div class="input-wrapper">
+                    <input type="file" id="image" name="image" class="form-control" accept="image/*" required>
+                </div>
+            </div>
+
+            <button type="submit" class="addbusiness-submit-btn">Add Business</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

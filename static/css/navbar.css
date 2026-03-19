@@ -41,8 +41,12 @@ border-radius:8px;
     color:white;
     font-size:16px;
     transition:0.3s;
-}
 
+}
+.nav-links a.active {
+    color: #84fff3;
+    border-bottom: 2px solid #84fff3;
+}
 .nav-links a:hover{
     color:#84fff3;
     text-shadow:0 0 30px rgb(255, 255, 255);

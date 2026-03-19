@@ -1,0 +1,70 @@
+/* Add Business Page Wrapper */
+.addbusiness-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px); /* Adjust based on navbar and footer */
+    padding: 60px 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Modern Card */
+.addbusiness-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(30, 58, 95, 0.08);
+    border: 1px solid rgba(43, 179, 163, 0.15);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.addbusiness-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 20px rgb(64, 196, 165);
+}
+
+/* Title */
+.addbusiness-title {
+    color: #1E3A5F;
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 0;
+}
+
+/* Submit Button Specific */
+.addbusiness-submit-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(90deg, #1E3A5F, #2BB3A3);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(43, 179, 163, 0.2);
+}
+
+.addbusiness-submit-btn:hover {
+    background: linear-gradient(90deg, #152d4a, #239689);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(43, 179, 163, 0.3);
+}
+
+.addbusiness-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* File Input Specific Styling */
+.addbusiness-card .form-control[type="file"] {
+    padding: 11px 16px;
+    background-color: #ffffff;
+    cursor: pointer;
+}

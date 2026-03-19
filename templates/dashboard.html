@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Local Business Hub</title>
+    <title>Business Owner Dashboard - Local Business Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
@@ -51,10 +51,13 @@
     <aside class="dashboard-sidebar">
         <div class="user-profile">
             <div class="avatar">
-                <span class="avatar-initial">{{ username[0]|upper if username else 'U' }}</span>
+                <span class="avatar-initial">{{ username[0]|upper if username else 'O' }}</span>
             </div>
             <h3 class="user-name">{{ username }}</h3>
-            <p class="user-role">Community Member</p>
+            <h2>{{location}}</h2>
+            <h2>{{description}}</h2>
+            <h2>{{category}}</h2>
+            <p class="user-role">Business Owner</p>
         </div>
         <nav class="sidebar-nav">
             <a href="#" class="nav-item active">
@@ -64,10 +67,16 @@
                 <span class="nav-icon">🏢</span> My Businesses
             </a>
             <a href="#" class="nav-item">
-                <span class="nav-icon">⭐</span> Saved Favorites
+                <span class="nav-icon">💰</span> Earnings
             </a>
             <a href="#" class="nav-item">
-                <span class="nav-icon">💬</span> Reviews
+                <span class="nav-icon">📅</span> Appointments
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⭐</span> Reviews
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span> Staff
             </a>
             <a href="#" class="nav-item">
                 <span class="nav-icon">⚙️</span> Settings
@@ -77,65 +86,90 @@
 
     <div class="dashboard-content">
         <header class="content-header">
-            <h1>Welcome back, {{ username }}! 👋</h1>
-            <p>Here's what's happening with your account today.</p>
+            <h1>Welcome back, {{ username }}! 📈</h1>
+            <p>Here's an overview of your businesses' performance today.</p>
         </header>
 
         <section class="stats-grid">
             <div class="stat-card">
+                <div class="stat-icon earnings-icon">💰</div>
+                <div class="stat-details">
+                    <h3>Total Earnings</h3>
+                    <p class="stat-value">$4,520</p>
+                </div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-icon businesses-icon">🏢</div>
                 <div class="stat-details">
-                    <h3>My Businesses</h3>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon reviews-icon">⭐</div>
-                <div class="stat-details">
-                    <h3>Favorites</h3>
-                    <p class="stat-value">12</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon comments-icon">💬</div>
-                <div class="stat-details">
-                    <h3>Reviews Left</h3>
-                    <p class="stat-value">5</p>
+                    <h3>Registered Businesses</h3>
+                    <p class="stat-value">2</p>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon views-icon">👁️</div>
                 <div class="stat-details">
                     <h3>Profile Views</h3>
-                    <p class="stat-value">142</p>
+                    <p class="stat-value">342</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bookings-icon">📅</div>
+                <div class="stat-details">
+                    <h3>New Bookings</h3>
+                    <p class="stat-value">18</p>
                 </div>
             </div>
         </section>
 
         <section class="recent-activity">
-            <h2>Recent Activity</h2>
+            <div class="section-header-flex">
+                <h2>Recent Activity</h2>
+                <a href="#" class="view-all-link">View All</a>
+            </div>
             <div class="activity-list">
                 <div class="activity-item">
-                    <div class="activity-icon add-icon">➕</div>
+                    <div class="activity-icon payment-icon">💵</div>
                     <div class="activity-text">
-                        <p><strong>Added a new favorite</strong></p>
-                        <span>Joe's Coffee Shop • 2 hours ago</span>
+                        <p><strong>Payment Received</strong></p>
+                        <span>$120 from John Doe for Plumbing Service • 2 hours ago</span>
                     </div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon review-icon">✍️</div>
+                    <div class="activity-icon booking-icon">📅</div>
                     <div class="activity-text">
-                        <p><strong>Left a 5-star review</strong></p>
-                        <span>Tech Fixers • 1 day ago</span>
+                        <p><strong>New Appointment Booked</strong></p>
+                        <span>Sarah Smith booked 'Tech Fixers' for tomorrow • 5 hours ago</span>
                     </div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon update-icon">🔄</div>
+                    <div class="activity-icon review-icon">⭐</div>
                     <div class="activity-text">
-                        <p><strong>Updated profile information</strong></p>
-                        <span>3 days ago</span>
+                        <p><strong>New 5-Star Review</strong></p>
+                        <span>"Great service, highly recommend!" - Mike • 1 day ago</span>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Action Section -->
+        <section class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="/add-business" class="action-card">
+                    <div class="action-icon">➕</div>
+                    <h3>Add New Business</h3>
+                    <p>Register another service or shop</p>
+                </a>
+                <a href="#" class="action-card">
+                    <div class="action-icon">📢</div>
+                    <h3>Create Promotion</h3>
+                    <p>Offer discounts to attract more customers</p>
+                </a>
+                <a href="#" class="action-card">
+                    <div class="action-icon">✉️</div>
+                    <h3>Message Clients</h3>
+                    <p>Send updates to your recent customers</p>
+                </a>
             </div>
         </section>
     </div>
