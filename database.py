@@ -6,8 +6,8 @@ app = Flask(__name__)
 # MySQL Config
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'          # your username
-app.config['MYSQL_PASSWORD'] = 'password'  # your password
-app.config['MYSQL_DB'] = 'mydatabase'      # your DB name
+app.config['MYSQL_PASSWORD'] = '123456789'  # your password
+app.config['MYSQL_DB'] = 'user'      # your DB name
 
 mysql = MySQL(app)
 
@@ -16,18 +16,21 @@ def main():
     return render_template("main.html")
 
 
-@app.route('/login', methods=['POST'])
-def signup():
-    username = request.form['username']
-    email = request.form['email']
-    password = request.form['password']
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if request.method == "POST":
 
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO users(username, email, password) VALUES(%s, %s, %s)",
-                (username, email, password))
-    
-    mysql.connection.commit()
-    cur.close()
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO user(username, email, password) VALUES(%s, %s, %s)",
+                    (username, email, password))
+        
+        mysql.connection.commit()
+        cur.close()
+        return "<h1>You register sucessfully</h1>"
 
     return render_template("register.html")
 

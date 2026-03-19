@@ -1,0 +1,55 @@
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    color: rgb(151, 234, 237);
+    transition: all 0.3s ease;
+}
+
+.profile-btn:hover {
+    color: white;
+    text-shadow: 0 0 10px rgb(151, 234, 237);
+    transform: translateY(-2px);
+}
+
+.profile-btn .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: white;
+    border-radius: 50%;
+    color: #1E3A5F;
+    font-size: 20px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.profile-btn:hover .icon {
+    box-shadow: 0 0 15px white;
+    transform: scale(1.05);
+}
+
+.logout-btn {
+    padding: 8px 18px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    display: inline-block;
+    background: transparent;
+    border: 2px solid rgb(100, 205, 193);
+    color: rgb(151, 234, 237);
+}
+
+.logout-btn:hover {
+    background: linear-gradient(90deg, rgb(50, 220, 198), rgb(151, 234, 237));
+    box-shadow: 0 0 20px rgb(221, 245, 255);
+    transform: translateY(-3px);
+    color: #1E3A5F;
+    border-color: transparent;
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Local Business Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/dashboard.css')}}">
+</head>
+<body>
+
+<header>
+    <nav class="navbar">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
+            <span>Local Business Hub</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/business">Businesses</a></li>
+            <li><a href="/add-business">Add Business</a></li>
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+
+        <!-- Auth Buttons -->
+        <div class="nav-auth">
+            {% if username %}
+            <div class="profile-section">
+                <a href="/dashboard" class="profile-btn active">
+                    <span class="icon">👤</span> <span>{{ username }}</span>
+                </a>
+            </div>
+            <a href="/logout" class="logout-btn">Logout</a>
+            {% else %}
+            <a href="/login" class="login-btn">Login</a>
+            <a href="/register" class="register-btn">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<main class="dashboard-container">
+    <aside class="dashboard-sidebar">
+        <div class="user-profile">
+            <div class="avatar">
+                <span class="avatar-initial">{{ username[0]|upper if username else 'U' }}</span>
+            </div>
+            <h3 class="user-name">{{ username }}</h3>
+            <p class="user-role">Community Member</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">📊</span> Overview
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏢</span> My Businesses
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⭐</span> Saved Favorites
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">💬</span> Reviews
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span> Settings
+            </a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-content">
+        <header class="content-header">
+            <h1>Welcome back, {{ username }}! 👋</h1>
+            <p>Here's what's happening with your account today.</p>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon businesses-icon">🏢</div>
+                <div class="stat-details">
+                    <h3>My Businesses</h3>
+                    <p class="stat-value">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon reviews-icon">⭐</div>
+                <div class="stat-details">
+                    <h3>Favorites</h3>
+                    <p class="stat-value">12</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon comments-icon">💬</div>
+                <div class="stat-details">
+                    <h3>Reviews Left</h3>
+                    <p class="stat-value">5</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon views-icon">👁️</div>
+                <div class="stat-details">
+                    <h3>Profile Views</h3>
+                    <p class="stat-value">142</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="recent-activity">
+            <h2>Recent Activity</h2>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon add-icon">➕</div>
+                    <div class="activity-text">
+                        <p><strong>Added a new favorite</strong></p>
+                        <span>Joe's Coffee Shop • 2 hours ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon review-icon">✍️</div>
+                    <div class="activity-text">
+                        <p><strong>Left a 5-star review</strong></p>
+                        <span>Tech Fixers • 1 day ago</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon update-icon">🔄</div>
+                    <div class="activity-text">
+                        <p><strong>Updated profile information</strong></p>
+                        <span>3 days ago</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <h2>Local Business Hub</h2>
+            <p>Connecting people with trusted local businesses in their community.</p>
+        </div>
+        <div class="footer-connect">
+            <h3>Connect With Us</h3>
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Twitter</a>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact</h3>
+            <p>Email: support@localhub.com</p>
+            <p>Phone: +91 9876543210</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Local Business Hub | All Rights Reserved</p>
+    </div>
+</footer>
+
+</body>
+</html>
