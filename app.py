@@ -118,9 +118,36 @@ def addbusiness():
         cur.close()
 
         # return redirect(url_for('owner_dashboard',name = name , location=location, description = description , category = category))
-        return render_template("dashboard.html"session['username'] = username,name = name , location=location, description = description , category = category)
+        return render_template("dashboard.html",username = session['username'],name = name , location=location, description = description , category = category)
     return render_template("addbusiness.html")
 
+
+@app.route("/search",methods =["GET", "POST"])
+def search():
+    query  = request.args.get("query ")
+    location = request.args.get("location")
+    category = request.args.get("category")
+
+    cur = mysql.connection.cursor()
+    sql = "SELECT * FROM businesses WHERE 1=1"
+    
+    if query:
+        sql += f"AND name LIKE '%{query}%'"
+
+    if location:
+        sql += f"AND loaction = {loaction}" 
+
+    if category:
+        sql += f"AND category  = {category}"
+
+    if not query and not location and not category:
+        cur.execute("SELECT * FROM businesses LIMIT 6") 
+
+    cur.execute(sql)
+    results = cur.fetchall()#.fetchall() so Get all rows returned by the SQL query
+    cur.close()
+    
+    return render_template("search.html",username = session['username'],results = results)
 
 @app.route('/logout')
 def logout():
