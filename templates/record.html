@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - Local Business Hub</title>
+    <title>{% if business %}{{ business[1] }}{% else %}Business Record{% endif %} - Local Business Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/search.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/record.css')}}">
 </head>
-
 <body>
 
     <header>
@@ -25,7 +23,8 @@
             <!-- Navigation Links -->
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/business">Businesses</a></li>
+                <li><a href="/search">Search Businesses</a></li>
+                <li><a href="/addbusiness">Add Business</a></li>
                 <li><a href="/categories">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
@@ -47,43 +46,42 @@
             </div>
         </nav>
     </header>
-<section class="search-section">
 
-    <div class="search-header">
-        <h2>Find Local Businesses 🔍</h2>
-        <p>Search by name and filter by location or category</p>
-    </div>
+    <main class="record-main">
+        <div class="record-header-title">
+            <h2>Business Records 📂</h2>
+            <p>Explore all the registered local businesses.</p>
+        </div>
 
-    <form action="/search" method="GET" class="search-box">
-
-        <!-- Search Input -->
-        <input type="text" name="query " placeholder="Search business name...">
-
-        <!-- Location -->
-        <select name="location">
-            <option value="">All Locations</option>
-            <option value="Pune">Pune</option>
-            <option value="Mumbai">Mumbai</option>
-        </select>
-
-        <!-- Category -->
-        <select name="category">
-            <option value="">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Electronics">Electronics</option>
-        </select>
-
-        <!-- Button -->
-        <button type="submit">Search</button>
-
-    </form>
-
-</section>
-
-{% if results %}
-    <div class="records-grid">
-    {% for business in results %}
-        <div class="record-card">
+        {% if businesses or results %}
+        <div class="records-grid">
+            {% set business_list = businesses if businesses else results %}
+            {% for business in business_list %}
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="{{ url_for('static', filename='uploads/' + business[5]) }}" alt="{{ business[1] }}">
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">{{ business[1] }}</h1>
+                    <p class="business-category">{{ business[4] }}</p>
+                    <p class="business-location">📍 {{ business[3] }}</p>
+                    
+                    <div class="business-description">
+                        <h2>About Us</h2>
+                        <p>{{ business[2][:100] }}{% if business[2]|length > 100 %}...{% endif %}</p>
+                    </div>
+                    
+                    <div class="business-actions">
+                        <a href="mailto:{{ business[6] }}" class="btn btn-primary">Contact</a>
+                        <a href="tel:{{ business[7] }}" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% elif business %}
+        <!-- Single business fallback -->
+        <div class="record-card single-record">
             <div class="record-image">
                 <img src="{{ url_for('static', filename='uploads/' + business[5]) }}" alt="{{ business[1] }}">
             </div>
@@ -94,23 +92,24 @@
                 
                 <div class="business-description">
                     <h2>About Us</h2>
-                    <p>{{ business[2][:100] }}{% if business[2]|length > 100 %}...{% endif %}</p>
+                    <p>{{ business[2] }}</p>
                 </div>
                 
                 <div class="business-actions">
-                    <a href="mailto:{{ business[6] if business|length > 6 else 'contact@example.com' }}" class="btn btn-primary">Contact</a>
-                    <a href="tel:{{ business[7] if business|length > 7 else '+1234567890' }}" class="btn btn-secondary">Call</a>
+                    <a href="mailto:contact@example.com" class="btn btn-primary">Contact Business</a>
+                    <a href="tel:+1234567890" class="btn btn-secondary">Call Now</a>
                 </div>
             </div>
         </div>
-    {% endfor %}
-    </div>
-{% else %}
-    <div class="not-found">
-        <h2>No businesses found 😕</h2>
-    </div>
-{% endif %}
- 
+        {% else %}
+        <div class="not-found">
+            <h2>No business records found.</h2>
+            <p>It seems there are no businesses to display right now.</p>
+            <br>
+            <a href="/search" class="btn btn-primary">Search Businesses</a>
+        </div>
+        {% endif %}
+    </main>
 
     <footer class="footer">
         <div class="footer-container">
@@ -137,5 +136,4 @@
     </footer>
 
 </body>
-
 </html>

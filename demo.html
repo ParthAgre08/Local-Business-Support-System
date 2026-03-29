@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Dashboard – Local Business Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d1117;
+    --bg2:       #161b22;
+    --bg3:       #1c2333;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --text:      #e6edf3;
+    --muted:     #7d8590;
+    --accent:    #2dd4bf;
+    --accent2:   #38bdf8;
+    --accent3:   #f472b6;
+    --green:     #4ade80;
+    --amber:     #fb923c;
+    --radius:    14px;
+    --sidebar-w: 220px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    height: 60px;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 18px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-brand .logo-circle {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 14px; font-weight: 400;
+    padding: 6px 12px; border-radius: 8px;
+    transition: all .2s;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--bg3); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-user {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--muted);
+  }
+  .avatar-sm {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+    color: #0d1117;
+  }
+  .btn-logout {
+    padding: 6px 14px; border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent; color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-logout:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ── LAYOUT ── */
+  .shell { display: flex; min-height: calc(100vh - 60px); }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 28px 16px;
+    display: flex; flex-direction: column;
+    gap: 6px; flex-shrink: 0;
+    position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto;
+  }
+  .sidebar-profile {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; padding-bottom: 24px; margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .avatar-lg {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 24px;
+    color: #0d1117;
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.2);
+  }
+  .sidebar-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; }
+  .sidebar-role { font-size: 11px; color: var(--accent); letter-spacing: .5px; text-transform: uppercase; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    color: var(--muted); font-size: 14px;
+    cursor: pointer; transition: all .2s; text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(45,212,191,0.08); color: var(--accent); border-color: rgba(45,212,191,0.15); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ── MAIN ── */
+  main { flex: 1; padding: 32px 36px; overflow-y: auto; }
+
+  /* ── WELCOME ── */
+  .welcome-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+  .welcome-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.2; }
+  .welcome-title span { color: var(--accent); }
+  .welcome-sub { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .date-badge {
+    font-size: 12px; color: var(--muted);
+    background: var(--bg3); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 8px;
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    display: flex; align-items: center; gap: 16px;
+    transition: transform .2s, border-color .2s;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .stat-card.orders::before { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+  .stat-card.favs::before   { background: linear-gradient(90deg, var(--accent3), #f97316); }
+  .stat-card.reviews::before{ background: linear-gradient(90deg, #a78bfa, var(--accent3)); }
+  .stat-card:hover { transform: translateY(-2px); border-color: var(--border2); }
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    flex-shrink: 0;
+  }
+  .stat-icon.orders  { background: rgba(56,189,248,0.1); }
+  .stat-icon.favs    { background: rgba(244,114,182,0.1); }
+  .stat-icon.reviews { background: rgba(167,139,250,0.1); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; letter-spacing: .3px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 30px; line-height: 1; }
+  .stat-card.orders  .stat-value { color: var(--accent2); }
+  .stat-card.favs    .stat-value { color: var(--accent3); }
+  .stat-card.reviews .stat-value { color: #a78bfa; }
+
+  /* ── SECTION TITLE ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+  .view-all {
+    font-size: 13px; color: var(--accent); text-decoration: none;
+    display: flex; align-items: center; gap: 4px;
+    transition: gap .2s;
+  }
+  .view-all:hover { gap: 8px; }
+
+  /* ── ORDER LIST ── */
+  .orders-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .order-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color .2s;
+  }
+  .order-card:hover { border-color: var(--border2); }
+  .order-status-dot {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .order-status-dot.delivered { background: rgba(74,222,128,0.1); }
+  .order-status-dot.service   { background: rgba(56,189,248,0.1); }
+  .order-status-dot.pending   { background: rgba(251,146,60,0.1); }
+  .order-info { flex: 1; min-width: 0; }
+  .order-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .order-meta { font-size: 12px; color: var(--muted); }
+  .order-meta .sep { margin: 0 6px; opacity: .4; }
+  .order-badge {
+    font-size: 11px; font-weight: 500;
+    padding: 4px 10px; border-radius: 6px;
+    cursor: pointer; transition: all .2s; white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .order-badge.reorder { background: rgba(56,189,248,0.1); color: var(--accent2); border-color: rgba(56,189,248,0.2); }
+  .order-badge.reorder:hover { background: rgba(56,189,248,0.2); }
+  .order-badge.review  { background: rgba(167,139,250,0.1); color: #a78bfa; border-color: rgba(167,139,250,0.2); }
+  .order-badge.review:hover  { background: rgba(167,139,250,0.2); }
+
+  /* ── NEARBY SECTION ── */
+  .nearby-section { margin-top: 36px; }
+
+  .nearby-search-bar {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .search-input-wrap {
+    flex: 1; min-width: 200px;
+    position: relative; display: flex; align-items: center;
+  }
+  .search-icon { position: absolute; left: 12px; color: var(--muted); font-size: 16px; }
+  .search-input {
+    width: 100%; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px 10px 38px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--muted); }
+
+  .filter-select {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px;
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; cursor: pointer; transition: border-color .2s;
+  }
+  .filter-select:focus { border-color: var(--accent); }
+
+  .btn-locate {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 18px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0d1117; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; transition: opacity .2s;
+    white-space: nowrap;
+  }
+  .btn-locate:hover { opacity: .88; }
+
+  /* categories pills */
+  .category-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .pill {
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg2);
+    font-size: 12px; color: var(--muted); cursor: pointer;
+    transition: all .2s;
+  }
+  .pill:hover, .pill.active {
+    border-color: var(--accent); color: var(--accent);
+    background: rgba(45,212,191,0.07);
+  }
+
+  /* Nearby grid */
+  .nearby-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+  .biz-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+    cursor: pointer;
+  }
+  .biz-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(45,212,191,0.3);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .biz-cover {
+    height: 100px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .biz-cover-1 { background: linear-gradient(135deg,#1e3a4a,#0e2233); }
+  .biz-cover-2 { background: linear-gradient(135deg,#2d1b3d,#1a0f2e); }
+  .biz-cover-3 { background: linear-gradient(135deg,#1a3020,#0f1f14); }
+  .biz-cover-4 { background: linear-gradient(135deg,#3a1f0d,#221206); }
+  .biz-cover-5 { background: linear-gradient(135deg,#1a1a3a,#0f0f22); }
+  .biz-cover-6 { background: linear-gradient(135deg,#2d2020,#1a1212); }
+
+  .open-badge {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px;
+    letter-spacing: .3px;
+  }
+  .open-badge.open   { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+  .open-badge.closed { background: rgba(239,68,68,0.1);   color: #f87171;      border: 1px solid rgba(239,68,68,0.2); }
+
+  .dist-badge {
+    position: absolute; top: 10px; left: 10px;
+    font-size: 10px; color: var(--muted);
+    background: rgba(13,17,23,0.75); backdrop-filter: blur(6px);
+    padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border);
+  }
+
+  .biz-body { padding: 14px 16px; }
+  .biz-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .biz-cat  { font-size: 11px; color: var(--muted); margin-bottom: 10px; letter-spacing: .3px; }
+  .biz-foot { display: flex; align-items: center; justify-content: space-between; }
+  .biz-rating { display: flex; align-items: center; gap: 4px; font-size: 13px; }
+  .biz-rating .star { color: #fbbf24; }
+  .biz-rating .cnt  { color: var(--muted); font-size: 11px; }
+  .biz-addr { font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+  .btn-fav {
+    width: 30px; height: 30px; border-radius: 8px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .btn-fav:hover, .btn-fav.active { border-color: var(--accent3); color: var(--accent3); background: rgba(244,114,182,0.08); }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    margin-top: 32px;
+    background: linear-gradient(135deg, rgba(45,212,191,0.08), rgba(56,189,248,0.05));
+    border: 1px solid rgba(45,212,191,0.15);
+    border-radius: var(--radius); padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .cta-text .cta-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 6px; }
+  .cta-text .cta-sub   { font-size: 13px; color: var(--muted); }
+  .cta-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  .btn-outline {
+    padding: 9px 18px; border-radius: 10px;
+    border: 1px solid var(--border2); background: transparent;
+    color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    padding: 9px 18px; border-radius: 10px;
+    background: var(--accent); border: none;
+    color: #0d1117; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .85; }
+
+  /* empty state */
+  .empty-state {
+    grid-column: 1/-1; padding: 48px 24px;
+    text-align: center; color: var(--muted);
+    background: var(--bg2); border: 1px dashed var(--border2);
+    border-radius: var(--radius);
+  }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* Loading shimmer */
+  @keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
+    background-size: 600px 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+  }
+  .skeleton-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+
+  /* animations */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .stat-card { animation: fadeUp .4s ease both; }
+  .stat-card:nth-child(1) { animation-delay: .05s; }
+  .stat-card:nth-child(2) { animation-delay: .12s; }
+  .stat-card:nth-child(3) { animation-delay: .19s; }
+  .order-card { animation: fadeUp .4s ease both; }
+  .order-card:nth-child(1) { animation-delay: .1s; }
+  .order-card:nth-child(2) { animation-delay: .18s; }
+  .order-card:nth-child(3) { animation-delay: .26s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="logo-circle">🏪</div>
+    Local Business Hub
+  </a>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Businesses</a>
+    <a href="#">Categories</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="avatar-sm">P</div>
+      Parth
+    </div>
+    <button class="btn-logout">Logout</button>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-profile">
+      <div class="avatar-lg">P</div>
+      <div class="sidebar-name">Parth</div>
+      <div class="sidebar-role">Valued Customer</div>
+    </div>
+    <a href="#" class="nav-item active"><span class="icon">📊</span> Overview</a>
+    <a href="#" class="nav-item"><span class="icon">🛒</span> My Orders</a>
+    <a href="#" class="nav-item"><span class="icon">⭐</span> Favorite Shops</a>
+    <a href="#" class="nav-item"><span class="icon">💬</span> My Reviews</a>
+    <a href="#" class="nav-item"><span class="icon">⚙️</span> Settings</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- Welcome row -->
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-title">Welcome back, <span>Parth</span>! 👋</div>
+        <div class="welcome-sub">Here's a summary of your recent interactions and deliveries.</div>
+      </div>
+      <div class="date-badge" id="live-date"></div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid">
+      <div class="stat-card orders">
+        <div class="stat-icon orders">📦</div>
+        <div>
+          <div class="stat-label">Orders Placed</div>
+          <div class="stat-value" id="stat-orders">—</div>
+        </div>
+      </div>
+      <div class="stat-card favs">
+        <div class="stat-icon favs">❤️</div>
+        <div>
+          <div class="stat-label">Favorite Shops</div>
+          <div class="stat-value" id="stat-favs">—</div>
+        </div>
+      </div>
+      <div class="stat-card reviews">
+        <div class="stat-icon reviews">⭐</div>
+        <div>
+          <div class="stat-label">Reviews Left</div>
+          <div class="stat-value" id="stat-reviews">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent orders -->
+    <div class="section-header">
+      <div class="section-title">Recent Order History</div>
+      <a href="#" class="view-all">View All Orders →</a>
+    </div>
+    <div class="orders-list" id="orders-list">
+      <!-- injected by JS -->
+    </div>
+
+    <!-- NEARBY SECTION -->
+    <div class="nearby-section">
+      <div class="section-header">
+        <div class="section-title">🗺️ Find Nearby Shops &amp; Services</div>
+        <span class="view-all" id="nearby-count" style="color:var(--muted);cursor:default;"></span>
+      </div>
+
+      <div class="nearby-search-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="search-query" type="text" placeholder="Search businesses by name or category…" oninput="filterBusinesses()">
+        </div>
+        <select class="filter-select" id="filter-cat" onchange="filterBusinesses()">
+          <option value="">All Categories</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Grocery">Grocery</option>
+          <option value="Services">Services</option>
+          <option value="Bakery">Bakery</option>
+          <option value="Pharmacy">Pharmacy</option>
+          <option value="Electronics">Electronics</option>
+        </select>
+        <select class="filter-select" id="filter-radius" onchange="filterBusinesses()">
+          <option value="2">Within 2 km</option>
+          <option value="5" selected>Within 5 km</option>
+          <option value="10">Within 10 km</option>
+        </select>
+        <button class="btn-locate" onclick="locateMe()">📍 Use My Location</button>
+      </div>
+
+      <div class="category-pills" id="cat-pills">
+        <div class="pill active" onclick="setPill(this,'')">All</div>
+        <div class="pill" onclick="setPill(this,'Restaurant')">🍽️ Restaurant</div>
+        <div class="pill" onclick="setPill(this,'Grocery')">🛒 Grocery</div>
+        <div class="pill" onclick="setPill(this,'Bakery')">🥐 Bakery</div>
+        <div class="pill" onclick="setPill(this,'Services')">🔧 Services</div>
+        <div class="pill" onclick="setPill(this,'Pharmacy')">💊 Pharmacy</div>
+        <div class="pill" onclick="setPill(this,'Electronics')">💻 Electronics</div>
+      </div>
+
+      <div class="nearby-grid" id="nearby-grid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- CTA BANNER -->
+    <div class="cta-banner">
+      <div class="cta-text">
+        <div class="cta-title">Discover more local gems 🏆</div>
+        <div class="cta-sub">Explore the full directory with 1,200+ verified local businesses in your city.</div>
+      </div>
+      <div class="cta-actions">
+        <button class="btn-outline">Explore on Map</button>
+        <button class="btn-primary">Search Directory</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── MOCK DATA (replace with fetch('/api/...') calls) ───────────────────────
+
+const CUSTOMER = {
+  id: 1, name: "Parth", initial: "P", role: "Valued Customer"
+};
+
+const DASHBOARD_STATS = {
+  orders_placed: 14,
+  favorite_shops: 8,
+  reviews_left: 5
+};
+
+const RECENT_ORDERS = [
+  {
+    id: 101,
+    business_name: "Fresh Bite Bakery",
+    items_summary: "2 Croissants, 1 Coffee",
+    status: "Order Delivered",
+    status_type: "delivered",
+    created_at: "2 hours ago",
+    has_review: false
+  },
+  {
+    id: 102,
+    business_name: "City Plumbers",
+    items_summary: "Sink repair service",
+    status: "Service Complete",
+    status_type: "service",
+    created_at: "1 week ago",
+    has_review: false
+  },
+  {
+    id: 103,
+    business_name: "Green Valley Grocers",
+    items_summary: "Weekly groceries",
+    status: "Order Delivered",
+    status_type: "delivered",
+    created_at: "2 weeks ago",
+    has_review: true
+  }
+];
+
+const NEARBY_BUSINESSES = [
+  {
+    id: 1, name: "Fresh Bite Bakery",
+    category: "Bakery",
+    address: "12, MG Road, Aurangabad",
+    distance_km: 0.4,
+    avg_rating: 4.7, total_reviews: 132,
+    is_open_now: true,
+    cover_class: "biz-cover-1", icon: "🥐"
+  },
+  {
+    id: 2, name: "Spice Garden Restaurant",
+    category: "Restaurant",
+    address: "45, Station Rd, Aurangabad",
+    distance_km: 0.9,
+    avg_rating: 4.3, total_reviews: 289,
+    is_open_now: true,
+    cover_class: "biz-cover-2", icon: "🍛"
+  },
+  {
+    id: 3, name: "Green Valley Grocers",
+    category: "Grocery",
+    address: "8, Kranti Chowk, Aurangabad",
+    distance_km: 1.2,
+    avg_rating: 4.5, total_reviews: 76,
+    is_open_now: true,
+    cover_class: "biz-cover-3", icon: "🛒"
+  },
+  {
+    id: 4, name: "City Plumbers",
+    category: "Services",
+    address: "27, CIDCO, Aurangabad",
+    distance_km: 1.8,
+    avg_rating: 4.8, total_reviews: 44,
+    is_open_now: false,
+    cover_class: "biz-cover-4", icon: "🔧"
+  },
+  {
+    id: 5, name: "HealthFirst Pharmacy",
+    category: "Pharmacy",
+    address: "3, Nirala Bazar, Aurangabad",
+    distance_km: 2.1,
+    avg_rating: 4.6, total_reviews: 91,
+    is_open_now: true,
+    cover_class: "biz-cover-5", icon: "💊"
+  },
+  {
+    id: 6, name: "TechZone Electronics",
+    category: "Electronics",
+    address: "19, Jalna Rd, Aurangabad",
+    distance_km: 3.4,
+    avg_rating: 4.1, total_reviews: 58,
+    is_open_now: false,
+    cover_class: "biz-cover-6", icon: "💻"
+  }
+];
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+// Live date
+const d = new Date();
+document.getElementById('live-date').textContent =
+  d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+// Stats (simulate API fetch delay)
+setTimeout(() => {
+  document.getElementById('stat-orders').textContent  = DASHBOARD_STATS.orders_placed;
+  document.getElementById('stat-favs').textContent    = DASHBOARD_STATS.favorite_shops;
+  document.getElementById('stat-reviews').textContent = DASHBOARD_STATS.reviews_left;
+}, 600);
+
+// Orders
+function renderOrders() {
+  const list = document.getElementById('orders-list');
+  list.innerHTML = RECENT_ORDERS.map(o => {
+    const iconMap = { delivered: '✅', service: '🔵', pending: '🟠' };
+    const btn = o.has_review
+      ? `<button class="order-badge review">Leave Review</button>`
+      : `<button class="order-badge reorder">Reorder</button>`;
+    return `
+    <div class="order-card">
+      <div class="order-status-dot ${o.status_type}">${iconMap[o.status_type]}</div>
+      <div class="order-info">
+        <div class="order-title">${o.status} – ${o.business_name}</div>
+        <div class="order-meta">
+          ${o.items_summary}
+          <span class="sep">•</span>
+          ${o.created_at}
+        </div>
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+renderOrders();
+
+// Nearby
+const favorites = new Set([1]);
+
+function renderNearby(list) {
+  const grid = document.getElementById('nearby-grid');
+  document.getElementById('nearby-count').textContent = `${list.length} found`;
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>No businesses found in this area or category.<br>Try expanding the radius.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(b => `
+    <div class="biz-card" onclick="openBiz(${b.id})">
+      <div class="biz-cover ${b.cover_class}">
+        <span>${b.icon}</span>
+        <span class="dist-badge">📍 ${b.distance_km} km</span>
+        <span class="open-badge ${b.is_open_now ? 'open':'closed'}">${b.is_open_now ? 'OPEN':'CLOSED'}</span>
+      </div>
+      <div class="biz-body">
+        <div class="biz-name">${b.name}</div>
+        <div class="biz-cat">${b.category.toUpperCase()}</div>
+        <div class="biz-foot">
+          <div class="biz-rating">
+            <span class="star">★</span> ${b.avg_rating}
+            <span class="cnt">(${b.total_reviews})</span>
+          </div>
+          <button class="btn-fav ${favorites.has(b.id)?'active':''}"
+            onclick="event.stopPropagation(); toggleFav(this, ${b.id})">
+            ${favorites.has(b.id) ? '❤️' : '🤍'}
+          </button>
+        </div>
+        <div class="biz-addr">📌 ${b.address}</div>
+      </div>
+    </div>`).join('');
+}
+renderNearby(NEARBY_BUSINESSES);
+
+// Filter
+function filterBusinesses() {
+  const q      = document.getElementById('search-query').value.toLowerCase();
+  const cat    = document.getElementById('filter-cat').value;
+  const radius = parseFloat(document.getElementById('filter-radius').value);
+  const filtered = NEARBY_BUSINESSES.filter(b =>
+    (!q   || b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q)) &&
+    (!cat || b.category === cat) &&
+    b.distance_km <= radius
+  );
+  renderNearby(filtered);
+}
+
+function setPill(el, cat) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('filter-cat').value = cat;
+  filterBusinesses();
+}
+
+function toggleFav(btn, id) {
+  if (favorites.has(id)) {
+    favorites.delete(id);
+    btn.innerHTML = '🤍';
+    btn.classList.remove('active');
+  } else {
+    favorites.add(id);
+    btn.innerHTML = '❤️';
+    btn.classList.add('active');
+    // TODO: POST /api/customer/1/favorites  { business_id: id }
+  }
+}
+
+function openBiz(id) {
+  // TODO: navigate to /business/:id
+  alert(`Opening business page for ID: ${id}\n(Wire up to your router)`);
+}
+
+function locateMe() {
+  if (!navigator.geolocation) return alert("Geolocation not supported.");
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    console.log(`User location: ${latitude}, ${longitude}`);
+    // TODO: fetch(`/api/businesses/nearby?lat=${latitude}&lng=${longitude}&radius=5`)
+    //       .then(r => r.json()).then(renderNearby);
+    alert(`Location detected: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}\nWire up to: GET /api/businesses/nearby?lat=&lng=&radius=5`);
+  }, () => alert("Location permission denied."));
+}
+</script>
+</body>
+</html>

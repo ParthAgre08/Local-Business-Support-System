@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Records - Local Business Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ─── Reset & Base ───────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0b0d0f;
+            --surface:   #131618;
+            --surface2:  #1c1f23;
+            --border:    rgba(255,255,255,0.07);
+            --accent:    #e8813a;
+            --accent2:   #f5a623;
+            --text:      #f0ece6;
+            --muted:     #7a7671;
+            --muted2:    #a09c96;
+            --radius:    14px;
+            --nav-h:     72px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ─── Background Grain ───────────────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        /* ─── Navbar ────────────────────────────────────────────────── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11,13,15,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar {
+            max-width: 1280px;
+            margin: 0 auto;
+            height: var(--nav-h);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo span {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.15rem;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            color: var(--muted2);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--surface2);
+        }
+
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .login-btn, .register-btn, .logout-btn {
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 9px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .login-btn {
+            color: var(--muted2);
+            border: 1px solid var(--border);
+        }
+        .login-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+        .register-btn {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(232,129,58,0.3);
+        }
+        .register-btn:hover {
+            background: #d9722e;
+            transform: translateY(-1px);
+            box-shadow: 0 0 28px rgba(232,129,58,0.45);
+        }
+
+        .logout-btn {
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+        .logout-btn:hover { color: #ff6b6b; border-color: #ff6b6b44; }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            background: var(--surface2);
+            padding: 7px 14px;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s;
+        }
+        .profile-btn:hover { border-color: var(--accent); }
+
+        /* ─── Page Header ────────────────────────────────────────────── */
+        .record-main {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 60px 28px 80px;
+        }
+
+        .record-header-title {
+            text-align: center;
+            margin-bottom: 56px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .record-header-title h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 400;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .record-header-title p {
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .header-pill {
+            display: inline-block;
+            background: rgba(232,129,58,0.12);
+            color: var(--accent);
+            border: 1px solid rgba(232,129,58,0.3);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+
+        /* ─── Grid ───────────────────────────────────────────────────── */
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        /* ─── Card ───────────────────────────────────────────────────── */
+        .record-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(.22,.68,0,1.2),
+                        box-shadow 0.35s ease,
+                        border-color 0.3s;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .record-card:nth-child(2) { animation-delay: .08s; }
+        .record-card:nth-child(3) { animation-delay: .16s; }
+        .record-card:nth-child(4) { animation-delay: .24s; }
+        .record-card:nth-child(5) { animation-delay: .32s; }
+        .record-card:nth-child(6) { animation-delay: .40s; }
+
+        .record-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,129,58,0.18);
+            border-color: rgba(232,129,58,0.25);
+        }
+
+        /* ─── Card Image ─────────────────────────────────────────────── */
+        .record-image {
+            position: relative;
+            height: 210px;
+            overflow: hidden;
+            background: var(--surface2);
+        }
+
+        .record-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.55s ease;
+            display: block;
+        }
+
+        .record-card:hover .record-image img {
+            transform: scale(1.07);
+        }
+
+        .image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(11,13,15,0.7) 0%, transparent 55%);
+            pointer-events: none;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(11,13,15,0.75);
+            backdrop-filter: blur(8px);
+            color: var(--accent2);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(245,166,35,0.25);
+        }
+
+        /* ─── Card Content ───────────────────────────────────────────── */
+        .record-content {
+            padding: 26px 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 0;
+        }
+
+        .business-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.45rem;
+            font-weight: 400;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+
+        .business-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+        }
+
+        .loc-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 18px;
+        }
+
+        .business-description {
+            flex: 1;
+            margin-bottom: 24px;
+        }
+
+        .about-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 7px;
+        }
+
+        .business-description p {
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: var(--muted2);
+        }
+
+        /* ─── Actions ────────────────────────────────────────────────── */
+        .business-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px 16px;
+            border-radius: 9px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(232,129,58,0.3);
+        }
+        .btn-primary:hover {
+            background: #d9722e;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(232,129,58,0.45);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1.5px solid rgba(232,129,58,0.45);
+        }
+        .btn-secondary:hover {
+            background: rgba(232,129,58,0.1);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ─── Single Record Layout ───────────────────────────────────── */
+        .single-record {
+            flex-direction: row;
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 420px;
+        }
+
+        .single-record .record-image {
+            flex: 0 0 420px;
+            height: auto;
+        }
+
+        .single-record .record-content {
+            padding: 48px 44px;
+        }
+
+        .single-record .business-name {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        /* ─── Not Found ──────────────────────────────────────────────── */
+        .not-found {
+            text-align: center;
+            padding: 120px 20px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .not-found-icon {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            opacity: 0.4;
+        }
+
+        .not-found h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .not-found p {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 36px;
+        }
+
+        /* ─── Footer ─────────────────────────────────────────────────── */
+        footer.footer {
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 56px 28px 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-brand h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .footer-brand p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            max-width: 300px;
+        }
+
+        .footer-connect h3,
+        .footer-contact h3 {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .footer-connect a {
+            display: block;
+            color: var(--muted2);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 9px;
+            transition: color 0.2s;
+        }
+        .footer-connect a:hover { color: var(--text); }
+
+        .footer-contact p {
+            color: var(--muted2);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 20px 28px;
+        }
+
+        .footer-bottom p {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        /* ─── Animations ─────────────────────────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── Responsive ─────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+
+            .single-record {
+                flex-direction: column;
+            }
+            .single-record .record-image {
+                flex: none;
+                height: 260px;
+            }
+            .single-record .record-content {
+                padding: 30px 24px;
+            }
+            .single-record .business-name {
+                font-size: 1.6rem;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .record-main { padding: 40px 16px 60px; }
+            .records-grid { grid-template-columns: 1fr; }
+            .footer-container { grid-template-columns: 1fr; }
+            .footer-brand { grid-column: 1; }
+            .navbar { padding: 0 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── NAVBAR ──────────────────────────────────────────────────── -->
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <!-- Replace with {{ url_for('static', filename='images/logo1.png') }} -->
+                <img src="https://placehold.co/36x36/e8813a/ffffff?text=LB" alt="logo">
+                <span>Local Business Hub</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/search">Search Businesses</a></li>
+                <li><a href="/addbusiness">Add Business</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-auth">
+                <!-- Logged-in state (use Jinja conditionals in Flask) -->
+                <a href="/customer_dashboard" class="profile-btn">
+                    <span>👤</span> <span>Username</span>
+                </a>
+                <a href="/logout" class="logout-btn">Logout</a>
+                <!-- Logged-out state -->
+                <!-- <a href="/login" class="login-btn">Login</a>
+                     <a href="/register" class="register-btn">Register</a> -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- ── MAIN ────────────────────────────────────────────────────── -->
+    <main class="record-main">
+
+        <!-- Page heading -->
+        <div class="record-header-title">
+            <div class="header-pill">📂 Directory</div>
+            <h2>Business Records</h2>
+            <p>Explore all the registered local businesses in your community.</p>
+        </div>
+
+        <!-- ── GRID: multiple businesses ── -->
+        <div class="records-grid">
+
+            <!-- Card 1 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/e8813a?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Restaurant</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">The Golden Fork</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Koregaon Park, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>An upscale dining experience bringing artisanal cuisine and farm-fresh ingredients to the heart of Pune...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/f5a623?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Retail</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">Bloom & Thread</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Baner, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>A curated boutique specializing in handwoven textiles, sustainable fashion, and locally crafted home décor...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/e8813a?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Wellness</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">Serene Minds Clinic</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Aundh, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>Holistic mental wellness services including therapy, yoga, and mindfulness coaching for all age groups...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/f5a623?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Technology</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">NexaLabs</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Hinjewadi, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>A software innovation studio building scalable SaaS products, mobile apps, and AI-driven tools for startups...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/e8813a?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Education</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">Apex Tutors</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Kothrud, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>One-on-one and group tutoring for grades 5–12 covering STEM, languages, and competitive exam preparation...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="record-card">
+                <div class="record-image">
+                    <img src="https://placehold.co/600x400/1c1f23/f5a623?text=Business+Photo" alt="Business">
+                    <div class="image-overlay"></div>
+                    <span class="category-badge">Home Services</span>
+                </div>
+                <div class="record-content">
+                    <h1 class="business-name">FixIt Pro</h1>
+                    <p class="business-location">
+                        <span class="loc-icon">📍</span>
+                        Viman Nagar, Pune
+                    </p>
+                    <div class="divider"></div>
+                    <div class="business-description">
+                        <p class="about-label">About</p>
+                        <p>Reliable home repair and maintenance experts offering plumbing, electrical, carpentry, and deep cleaning services...</p>
+                    </div>
+                    <div class="business-actions">
+                        <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
+                        <a href="tel:+919876543210" class="btn btn-secondary">Call</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── NOT FOUND STATE (shown when no results) ── -->
+        <!--
+        <div class="not-found">
+            <div class="not-found-icon">🔍</div>
+            <h2>No business records found.</h2>
+            <p>It seems there are no businesses to display right now.</p>
+            <a href="/search" class="btn btn-primary" style="display:inline-block;max-width:200px;">Search Businesses</a>
+        </div>
+        -->
+
+    </main>
+
+    <!-- ── FOOTER ───────────────────────────────────────────────────── -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h2>Local Business Hub</h2>
+                <p>Connecting people with trusted local businesses in their community. Discover, explore, and grow together.</p>
+            </div>
+            <div class="footer-connect">
+                <h3>Connect</h3>
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Twitter</a>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>support@localhub.com</p>
+                <p>+91 98765 43210</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Local Business Hub — All Rights Reserved</p>
+        </div>
+    </footer>
+
+</body>
+</html>

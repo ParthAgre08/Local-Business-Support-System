@@ -129,7 +129,7 @@ def search():
     category = request.args.get("category")
 
     cur = mysql.connection.cursor()
-    sql = "SELECT * FROM businesses WHERE 1=1"
+    sql = "SELECT * FROM business_record WHERE 1=1"
     
     if query:
         sql += f"AND name LIKE '%{query}%'"
@@ -141,7 +141,7 @@ def search():
         sql += f"AND category  = {category}"
 
     if not query and not location and not category:
-        cur.execute("SELECT * FROM businesses LIMIT 6") 
+        cur.execute("SELECT * FROM business_record LIMIT 6") 
 
     cur.execute(sql)
     results = cur.fetchall()#.fetchall() so Get all rows returned by the SQL query
