@@ -124,7 +124,7 @@ def addbusiness():
 
 @app.route("/search",methods =["GET", "POST"])
 def search():
-    query  = request.args.get("query ")
+    query = request.args.get("query")
     location = request.args.get("location")
     category = request.args.get("category")
 
@@ -132,16 +132,20 @@ def search():
     sql = "SELECT * FROM business_record WHERE 1=1"
     
     if query:
-        sql += f"AND name LIKE '%{query}%'"
+        sql += f" AND name LIKE '%{query}%'"
 
     if location:
-        sql += f"AND loaction = {loaction}" 
+        sql += f" AND location = '{location}'" 
 
     if category:
-        sql += f"AND category  = {category}"
+        sql += f" AND category = '{category}'"
 
     if not query and not location and not category:
         cur.execute("SELECT * FROM business_record LIMIT 6") 
+        results = cur.fetchall()#.fetchall() so Get all rows returned by the SQL query
+        cur.close() 
+        return render_template("search.html",username = session['username'],results = results)
+
 
     cur.execute(sql)
     results = cur.fetchall()#.fetchall() so Get all rows returned by the SQL query

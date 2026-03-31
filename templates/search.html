@@ -47,38 +47,52 @@
             </div>
         </nav>
     </header>
-<section class="search-section">
-
-    <div class="search-header">
-        <h2>Find Local Businesses 🔍</h2>
-        <p>Search by name and filter by location or category</p>
+<section class="search-section-new" style="margin: 30px auto; padding: 0 43px;">
+    <div style="margin-bottom: 16px;">
+        <h2 style="font-family: 'Poppins', sans-serif; font-size: 24px; color: #2c3e50; margin: 0;">Find Local Businesses 🔍</h2>
+        <p style="color: #666; font-size: 14px; margin-top: 5px;">Search by name and filter by location or category</p>
     </div>
 
-    <form action="/search" method="GET" class="search-box">
-
-        <!-- Search Input -->
-        <input type="text" name="query " placeholder="Search business name...">
-
-        <!-- Location -->
-        <select name="location">
+    <!-- The actual search form modeled after demo.html -->
+    <form action="/search" method="GET" class="nearby-search-bar" id="search-form">
+        <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" type="text" name="query" placeholder="Search business name...">
+        </div>
+        
+        <select class="filter-select" name="location">
             <option value="">All Locations</option>
             <option value="Pune">Pune</option>
             <option value="Mumbai">Mumbai</option>
         </select>
-
-        <!-- Category -->
-        <select name="category">
-            <option value="">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Electronics">Electronics</option>
-        </select>
-
-        <!-- Button -->
-        <button type="submit">Search</button>
-
+        
+        <!-- Hidden input to store chosen category from pills -->
+        <input type="hidden" name="category" id="category-input" value="">
+        
+        <button class="btn-locate" type="submit">Search</button>
     </form>
 
+    <div class="category-pills" id="cat-pills">
+        <div class="pill active" onclick="setPill(this, '')">All Categories</div>
+        <div class="pill" onclick="setPill(this, 'Food')">🍽️ Food</div>
+        <div class="pill" onclick="setPill(this, 'Electronics')">💻 Electronics</div>
+        <div class="pill" onclick="setPill(this, 'Services')">🔧 Services</div>
+        <div class="pill" onclick="setPill(this, 'Pharmacy')">💊 Pharmacy</div>
+    </div>
 </section>
+
+<script>
+function setPill(el, cat) {
+  // Remove active from all
+  document.querySelectorAll('.cat-pills .pill, #cat-pills .pill').forEach(p => p.classList.remove('active'));
+  // Add active to clicked
+  el.classList.add('active');
+  // Set hidden input value
+  document.getElementById('category-input').value = cat;
+  // Auto submit form
+  document.getElementById('search-form').submit();
+}
+</script>
 
 {% if results %}
     <div class="records-grid">
@@ -107,7 +121,7 @@
     </div>
 {% else %}
     <div class="not-found">
-        <h2>No businesses found 😕</h2>
+        <h2>No businesses found 🤷</h2>
     </div>
 {% endif %}
  

@@ -1,37 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Local Business Hub</title>
+    <!-- Keep Poppins for the overall matching theme -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/customer.css')}}">
 </head>
-
 <body>
 
     <header>
         <nav class="navbar">
-            <!-- Logo -->
             <div class="logo">
                 <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
                 <span>Local Business Hub</span>
             </div>
-
-            <!-- Navigation Links -->
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/business">Businesses</a></li>
-                <li><a href="/categories">Categories</a></li>
+                <li><a href="/search">Search Businesses</a></li>
+                <li><a href="/category">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
             </ul>
-
-            <!-- Auth Buttons -->
             <div class="nav-auth">
                 {% if username %}
                 <div class="profile-section">
@@ -48,131 +42,87 @@
         </nav>
     </header>
 
-    <main class="dashboard-container">
+    <div class="dashboard-shell">
+
+        <!-- SIDEBAR -->
         <aside class="dashboard-sidebar">
-            <div class="user-profile">
-                <div class="avatar">
-                    <span class="avatar-initial">{{ username[0]|upper if username else 'C' }}</span>
-                </div>
-                <h3 class="user-name">{{ username }}</h3>
-                <p class="user-role">Valued Customer</p>
+            <div class="sidebar-profile">
+                <div class="avatar-lg">{{ username[0]|upper if username else 'C' }}</div>
+                <div class="sidebar-name">{{ username if username else 'Guest' }}</div>
+                <div class="sidebar-role">Valued Customer</div>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">
-                    <span class="nav-icon">📊</span> Overview
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">🛒</span> My Orders
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">⭐</span> Favorite Shops
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">💬</span> My Reviews
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">⚙️</span> Settings
-                </a>
+                <a href="#" class="nav-item active"><span class="icon">📊</span> Overview</a>
+                <a href="#" class="nav-item"><span class="icon">🛒</span> My Orders</a>
+                <a href="#" class="nav-item"><span class="icon">⭐</span> Favorite Shops</a>
+                <a href="#" class="nav-item"><span class="icon">💬</span> My Reviews</a>
+                <a href="#" class="nav-item"><span class="icon">⚙️</span> Settings</a>
             </nav>
         </aside>
 
-        <div class="dashboard-content">
-            <header class="content-header">
-                <h1>Welcome back, {{ username }}! 👋</h1>
-                <p>Here's a summary of your recent interactions and deliveries.</p>
-            </header>
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-content">
 
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon orders-icon">📦</div>
-                    <div class="stat-details">
-                        <h3>Orders Placed</h3>
-                        <p class="stat-value">14</p>
-                    </div>
+            <!-- Welcome row -->
+            <div class="welcome-row">
+                <div>
+                    <div class="welcome-title">Welcome back, <span>{{ username if username else 'Guest' }}</span>! 👋</div>
+                    <div class="welcome-sub">Here's a summary of your recent interactions and deliveries.</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon favorites-icon">❤️</div>
-                    <div class="stat-details">
-                        <h3>Favorite Shops</h3>
-                        <p class="stat-value">8</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon reviews-icon">⭐</div>
-                    <div class="stat-details">
-                        <h3>Reviews Left</h3>
-                        <p class="stat-value">5</p>
-                    </div>
-                </div>
-            </section>
+                <div class="date-badge" id="live-date"></div>
+            </div>
 
-            <!-- Recent History -->
-            <section class="recent-activity">
-                <div class="section-header-flex">
-                    <h2>Recent Order History</h2>
-                    <a href="#" class="view-all-link">View All Orders</a>
-                </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon completed-icon">✔️</div>
-                        <div class="activity-text">
-                            <p><strong>Order Delivered - Fresh Bite Bakery</strong></p>
-                            <span>2 Croissants, 1 Coffee • 2 hours ago</span>
-                        </div>
-                        <div class="activity-action">
-                            <button class="reorder-btn">Reorder</button>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon completed-icon">✔️</div>
-                        <div class="activity-text">
-                            <p><strong>Service Complete - City Plumbers</strong></p>
-                            <span>Sink repair service • 1 week ago</span>
-                        </div>
-                        <div class="activity-action">
-                            <button class="review-btn">Leave Review</button>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon completed-icon">✔️</div>
-                        <div class="activity-text">
-                            <p><strong>Order Delivered - Green Valley Grocers</strong></p>
-                            <span>Weekly groceries • 2 weeks ago</span>
-                        </div>
-                        <div class="activity-action">
-                            <button class="reorder-btn">Reorder</button>
-                        </div>
+            <!-- Stats grid -->
+            <div class="stats-grid">
+                <div class="stat-card orders">
+                    <div class="stat-icon orders">📦</div>
+                    <div>
+                        <div class="stat-label">Orders Placed</div>
+                        <div class="stat-value" id="stat-orders">—</div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Find Nearby Shops Section -->
-            <section class="find-shops-cta">
-                <div class="cta-content">
-                    <div class="cta-text">
-                        <h2>Find Nearby Shops & Services 🏪</h2>
-                        <p>Discover local restaurants, grocery stores, plumbers, and more in your neighborhood. Support
-                            your community today!</p>
-                        <div class="cta-buttons">
-                            <button class="primary-btn map-btn">
-                                <span class="btn-icon">🗺️</span> Explore on Map
-                            </button>
-                            <button class="outline-btn search-dir-btn">
-                                <span class="btn-icon">🔍</span> Search Directory
-                            </button>
-                        </div>
-                    </div>
-                    <div class="cta-image-wrapper">
-                        <div class="cta-decorative-circle">
-                            <span>🛍️</span>
-                        </div>
+                <div class="stat-card favs">
+                    <div class="stat-icon favs">❤️</div>
+                    <div>
+                        <div class="stat-label">Favorite Shops</div>
+                        <div class="stat-value" id="stat-favs">—</div>
                     </div>
                 </div>
-            </section>
+                <div class="stat-card reviews">
+                    <div class="stat-icon reviews">⭐</div>
+                    <div>
+                        <div class="stat-label">Reviews Left</div>
+                        <div class="stat-value" id="stat-reviews">—</div>
+                    </div>
+                </div>
+            </div>
 
-        </div>
-    </main>
+            <!-- Recent orders -->
+            <div class="section-header">
+                <div class="section-title">Recent Order History</div>
+                <a href="#" class="view-all">View All Orders →</a>
+            </div>
+            <div class="orders-list" id="orders-list">
+                <!-- injected by JS -->
+            </div>
 
+            <!-- CTA BANNER -->
+            <div class="cta-banner">
+                <div class="cta-text">
+                    <div class="cta-title">Discover more local gems 🏆</div>
+                    <div class="cta-sub">Explore the full directory with 1,200+ verified local businesses in your city.</div>
+                </div>
+                <div class="cta-actions">
+                    <button class="btn-outline">Explore on Map</button>
+                    <a href="/search" class="btn-primary" style="text-decoration:none;">Search Directory</a>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
@@ -197,6 +147,80 @@
         </div>
     </footer>
 
-</body>
+    <script>
+    // Dashboard Stats
+    const DASHBOARD_STATS = {
+      orders_placed: 14,
+      favorite_shops: 8,
+      reviews_left: 5
+    };
 
+    const RECENT_ORDERS = [
+      {
+        id: 101,
+        business_name: "Fresh Bite Bakery",
+        items_summary: "2 Croissants, 1 Coffee",
+        status: "Order Delivered",
+        status_type: "delivered",
+        created_at: "2 hours ago",
+        has_review: false
+      },
+      {
+        id: 102,
+        business_name: "City Plumbers",
+        items_summary: "Sink repair service",
+        status: "Service Complete",
+        status_type: "service",
+        created_at: "1 week ago",
+        has_review: false
+      },
+      {
+        id: 103,
+        business_name: "Green Valley Grocers",
+        items_summary: "Weekly groceries",
+        status: "Order Delivered",
+        status_type: "delivered",
+        created_at: "2 weeks ago",
+        has_review: true
+      }
+    ];
+
+    // Live date
+    const d = new Date();
+    document.getElementById('live-date').textContent =
+      d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+    // Stats simulation
+    setTimeout(() => {
+      document.getElementById('stat-orders').textContent  = DASHBOARD_STATS.orders_placed;
+      document.getElementById('stat-favs').textContent    = DASHBOARD_STATS.favorite_shops;
+      document.getElementById('stat-reviews').textContent = DASHBOARD_STATS.reviews_left;
+    }, 600);
+
+    // Orders rendering
+    function renderOrders() {
+      const list = document.getElementById('orders-list');
+      list.innerHTML = RECENT_ORDERS.map(o => {
+        const iconMap = { delivered: '✅', service: '🔵', pending: '🟠' };
+        const btn = o.has_review
+          ? `<button class="order-badge review">Leave Review</button>`
+          : `<button class="order-badge reorder">Reorder</button>`;
+        return `
+        <div class="order-card">
+          <div class="order-status-dot ${o.status_type}">${iconMap[o.status_type]}</div>
+          <div class="order-info">
+            <div class="order-title">${o.status} – ${o.business_name}</div>
+            <div class="order-meta">
+              ${o.items_summary}
+              <span class="sep">•</span>
+              ${o.created_at}
+            </div>
+          </div>
+          ${btn}
+        </div>`;
+      }).join('');
+    }
+    renderOrders();
+    </script>
+</body>
 </html>
