@@ -1,70 +1,145 @@
-/* Add Business Page Wrapper */
+/* ===== GLOBAL ===== */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f6f7fb;
+}
+
+/* ===== WRAPPER ===== */
 .addbusiness-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 200px); /* Adjust based on navbar and footer */
-    padding: 60px 20px;
-    font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
 }
 
-/* Modern Card */
+/* ===== CARD ===== */
 .addbusiness-card {
-    background: #ffffff;
-    width: 100%;
-    max-width: 600px;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(30, 58, 95, 0.08);
-    border: 1px solid rgba(43, 179, 163, 0.15);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  width: 100%;
+  max-width: 650px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  animation: fadeIn 0.4s ease;
 }
 
-.addbusiness-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 0 20px rgb(64, 196, 165);
-}
-
-/* Title */
+/* ===== TITLE ===== */
 .addbusiness-title {
-    color: #1E3A5F;
-    font-size: 28px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 30px;
-    margin-top: 0;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
 }
 
-/* Submit Button Specific */
+/* ===== FORM GROUP ===== */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* ===== INPUT WRAPPER ===== */
+.input-wrapper {
+  position: relative;
+}
+
+/* ===== INPUT ===== */
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 14px;
+  outline: none;
+  transition: 0.25s;
+}
+
+/* FOCUS EFFECT */
+.form-control:focus {
+  border-color: #6c63ff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+/* TEXTAREA */
+textarea.form-control {
+  resize: none;
+}
+
+/* SELECT */
+select.form-control {
+  cursor: pointer;
+}
+
+/* FILE INPUT */
+input[type="file"] {
+  padding: 10px;
+  background: #ffffff;
+}
+
+/* ===== TWO COLUMN TIME ===== */
+.form-group[style*="flex"] {
+  display: flex !important;
+  gap: 20px;
+}
+
+/* ===== BUTTON ===== */
 .addbusiness-submit-btn {
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(90deg, #1E3A5F, #2BB3A3);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
-    margin-top: 20px;
-    box-shadow: 0 4px 15px rgba(43, 179, 163, 0.2);
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #6c63ff, #7c3aed);
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
 }
 
+/* HOVER */
 .addbusiness-submit-btn:hover {
-    background: linear-gradient(90deg, #152d4a, #239689);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(43, 179, 163, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108,99,255,0.3);
 }
 
+/* CLICK */
 .addbusiness-submit-btn:active {
-    transform: translateY(0);
+  transform: scale(0.97);
 }
 
-/* File Input Specific Styling */
-.addbusiness-card .form-control[type="file"] {
-    padding: 11px 16px;
-    background-color: #ffffff;
-    cursor: pointer;
+/* ===== CUSTOM CATEGORY INPUT ===== */
+#custom_category {
+  margin-top: 10px;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .addbusiness-card {
+    padding: 20px;
+  }
+
+  .form-group[style*="flex"] {
+    flex-direction: column !important;
+  }
 }

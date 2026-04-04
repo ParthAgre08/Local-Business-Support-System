@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 {% block content %}
 <div class="addbusiness-wrapper">
@@ -51,6 +51,21 @@
                 <label for="location">Location</label>
                 <div class="input-wrapper">
                     <input type="text" id="location" name="location" class="form-control" placeholder="Enter business location/address" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <label for="starting_time">Opening Time</label>
+                    <div class="input-wrapper">
+                        <input type="time" id="starting_time" name="starting_time" class="form-control" required style="width: 100%;">
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <label for="closing_time">Closing Time</label>
+                    <div class="input-wrapper">
+                        <input type="time" id="closing_time" name="closing_time" class="form-control" required style="width: 100%;">
+                    </div>
                 </div>
             </div>
 

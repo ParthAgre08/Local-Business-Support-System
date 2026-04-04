@@ -11,10 +11,11 @@ mysql = MySQL(app)
 
 with app.app_context():
     cur = mysql.connection.cursor()
-    cur.execute("DESCRIBE customer_dashboard_Favorite_Shops;")
-    columns = cur.fetchall()
-    with open('db_schema_utf8.txt', 'w', encoding='utf-8') as f:
-        for col in columns:
-            f.write(str(col) + '\n')
-
-
+    try:
+        cur.execute("ALTER TABLE customer_dashboard_Favorite_Shops DROP INDEX Email;")
+        mysql.connection.commit()
+        print("Successfully dropped UNIQUE constraint on Email.")
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        cur.close()

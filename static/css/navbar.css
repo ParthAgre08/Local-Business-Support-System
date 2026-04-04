@@ -1,90 +1,134 @@
-/* Navbar Container */
-.navbar{
+/* navbar.css - Glassmorphic Startup Header */
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 40px;
-    background: linear-gradient(90deg,#1E3A5F,#2BB3A3,#1E3A5F);
-    color:white;
-    border-radius: 10px;
-    border-color: rgb(235, 148, 255);
-    font-family: 'Poppins', sans-serif;
-    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  height: 72px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* Logo Section */
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:30px;
-    font-weight:bold;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  font-family: var(--font-heading);
 }
 
-.logo img{
-   
-    width:60px;
-border-radius:8px;
-/* background:transparent; */
+.logo img {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
 }
 
-/* Navigation Links */
-.nav-links{
-    list-style:none;
-    display:flex;
-    gap:30px;
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links a{
-    text-decoration:none;
-    color:white;
-    font-size:16px;
-    transition:0.3s;
-
-}
-.nav-links a.active {
-    color: #84fff3;
-    border-bottom: 2px solid #84fff3;
-}
-.nav-links a:hover{
-    color:#84fff3;
-    text-shadow:0 0 30px rgb(255, 255, 255);
-transition:0.3s;
+.nav-links a {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-/* Auth Buttons */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--accent-base);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+  width: 100%;
+}
+
 .nav-auth {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.login-btn, .register-btn {
-    padding: 8px 18px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+/* Base button styles applied from global css, specific sizing here */
+.login-btn, .register-btn, .logout-btn, .profile-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
 }
 
 .login-btn {
-    background: linear-gradient(90deg, rgb(49, 140, 156), rgb(100, 205, 193), rgb(49, 140, 156));
-    color: aliceblue;
-    border: 2px solid transparent;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+}
+.login-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
 }
 
 .register-btn {
-    background: transparent;
-    border: 2px solid rgb(100, 205, 193);
-    color: rgb(151, 234, 237);
+  background: var(--accent-gradient);
+  color: var(--accent-text);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+.register-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  color: white;
 }
 
-.login-btn:hover, .register-btn:hover {
-    background: linear-gradient(90deg, rgb(50, 220, 198), rgb(151, 234, 237));
-    box-shadow: 0 0 20px rgb(221, 245, 255);
-    transform: translateY(-3px);
-    color: #1E3A5F;
-    border-color: transparent;
-}  
+.profile-btn {
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  background: var(--bg-card);
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+.profile-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+
+.logout-btn {
+  color: var(--text-muted);
+}
+.logout-btn:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}

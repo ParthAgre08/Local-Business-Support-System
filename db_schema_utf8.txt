@@ -1,0 +1,5 @@
+('Id', 'int', 'NO', 'PRI', None, 'auto_increment')
+('Email', 'varchar(100)', 'YES', 'UNI', None, '')
+('shop_name', 'varchar(100)', 'YES', '', None, '')
+('shop_location', 'varchar(100)', 'YES', '', None, '')
+('shop_details', 'varchar(500)', 'YES', '', None, '')

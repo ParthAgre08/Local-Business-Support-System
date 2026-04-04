@@ -22,6 +22,7 @@
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/search">Search Businesses</a></li>
+                 <li><a href="/addbusiness">Add Business</a></li>
                 <li><a href="/category">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
@@ -78,21 +79,21 @@
                     <div class="stat-icon orders">📦</div>
                     <div>
                         <div class="stat-label">Orders Placed</div>
-                        <div class="stat-value" id="stat-orders">—</div>
+                        <div class="stat-value" id="stat-orders">{{ orders_count }}</div>
                     </div>
                 </div>
                 <div class="stat-card favs">
                     <div class="stat-icon favs">❤️</div>
                     <div>
                         <div class="stat-label">Favorite Shops</div>
-                        <div class="stat-value" id="stat-favs">—</div>
+                        <div class="stat-value" id="stat-favs">{{ fav_count }}</div>
                     </div>
                 </div>
                 <div class="stat-card reviews">
                     <div class="stat-icon reviews">⭐</div>
                     <div>
                         <div class="stat-label">Reviews Left</div>
-                        <div class="stat-value" id="stat-reviews">—</div>
+                        <div class="stat-value" id="stat-reviews">{{ reviews_count }}</div>
                     </div>
                 </div>
             </div>
@@ -103,7 +104,32 @@
                 <a href="#" class="view-all">View All Orders →</a>
             </div>
             <div class="orders-list" id="orders-list">
-                <!-- injected by JS -->
+                {% if recent_orders %}
+                    {% for o in recent_orders %}
+                    <div class="order-card">
+                        <div class="order-status-dot {{ o.status_type }}">
+                            {% if o.status_type == 'delivered' %}✅
+                            {% elif o.status_type == 'service' %}🔵
+                            {% else %}🟠{% endif %}
+                        </div>
+                        <div class="order-info">
+                            <div class="order-title">{{ o.status }} – {{ o.business_name }}</div>
+                            <div class="order-meta">
+                              {{ o.items_summary }}
+                              <span class="sep">•</span>
+                              {{ o.created_at }}
+                            </div>
+                        </div>
+                        {% if o.has_review %}
+                        <button class="order-badge review">Leave Review</button>
+                        {% else %}
+                        <button class="order-badge reorder">Reorder</button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 20px; color: #666;">No recent orders found.</div>
+                {% endif %}
             </div>
 
             <!-- CTA BANNER -->
@@ -148,79 +174,10 @@
     </footer>
 
     <script>
-    // Dashboard Stats
-    const DASHBOARD_STATS = {
-      orders_placed: 14,
-      favorite_shops: 8,
-      reviews_left: 5
-    };
-
-    const RECENT_ORDERS = [
-      {
-        id: 101,
-        business_name: "Fresh Bite Bakery",
-        items_summary: "2 Croissants, 1 Coffee",
-        status: "Order Delivered",
-        status_type: "delivered",
-        created_at: "2 hours ago",
-        has_review: false
-      },
-      {
-        id: 102,
-        business_name: "City Plumbers",
-        items_summary: "Sink repair service",
-        status: "Service Complete",
-        status_type: "service",
-        created_at: "1 week ago",
-        has_review: false
-      },
-      {
-        id: 103,
-        business_name: "Green Valley Grocers",
-        items_summary: "Weekly groceries",
-        status: "Order Delivered",
-        status_type: "delivered",
-        created_at: "2 weeks ago",
-        has_review: true
-      }
-    ];
-
     // Live date
     const d = new Date();
     document.getElementById('live-date').textContent =
       d.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
-    // Stats simulation
-    setTimeout(() => {
-      document.getElementById('stat-orders').textContent  = DASHBOARD_STATS.orders_placed;
-      document.getElementById('stat-favs').textContent    = DASHBOARD_STATS.favorite_shops;
-      document.getElementById('stat-reviews').textContent = DASHBOARD_STATS.reviews_left;
-    }, 600);
-
-    // Orders rendering
-    function renderOrders() {
-      const list = document.getElementById('orders-list');
-      list.innerHTML = RECENT_ORDERS.map(o => {
-        const iconMap = { delivered: '✅', service: '🔵', pending: '🟠' };
-        const btn = o.has_review
-          ? `<button class="order-badge review">Leave Review</button>`
-          : `<button class="order-badge reorder">Reorder</button>`;
-        return `
-        <div class="order-card">
-          <div class="order-status-dot ${o.status_type}">${iconMap[o.status_type]}</div>
-          <div class="order-info">
-            <div class="order-title">${o.status} – ${o.business_name}</div>
-            <div class="order-meta">
-              ${o.items_summary}
-              <span class="sep">•</span>
-              ${o.created_at}
-            </div>
-          </div>
-          ${btn}
-        </div>`;
-      }).join('');
-    }
-    renderOrders();
     </script>
 </body>
 </html>

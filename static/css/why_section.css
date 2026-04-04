@@ -1,61 +1,75 @@
+/* why_section.css - Beautiful Grid Setup */
+
 .why {
-    border-radius: 10px;
-    margin-left: 4px;
-    margin-right: 4px;
-    margin-top: 15px;
-    border: 2px solid #f1f1f1;
-    padding: 100px 10%;
-    text-align: center;
-    justify-content: space-between;
-}
-
-.why img{
-height: 65px;
-width: 65px;
-}
-
-
-
-.why p{
-    font-size: 20px;
-    margin-bottom:60px;
-}
-.why-points {
-    margin-top: 40px;
+  padding: 100px 24px;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  border-top: 1px solid var(--border-color);
+  background: linear-gradient(to bottom, var(--bg-main) 0%, var(--bg-card) 100%);
 }
 
 .why h2 {
-    font-size: 40px;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.why > p {
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin: 0 auto 64px auto;
+  text-align: center;
+  max-width: 600px;
+}
+
+.why-points {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .row {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-bottom: 20px;
-    
-
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
-
 .point {
-    background: white;
-    padding: 55px 75px;
-    border-radius: 10px;
-    width: 320px;
-    font-size: 20px;
-    font-weight: bold;
-    box-shadow: 0 0 20px rgb(174, 235, 255);
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .point:hover {
-    transform: translateY(-8px);
-    transition: 0.3s;
-    box-shadow: 0 0 20px rgb(115, 226, 246);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+.point img {
+  width: 48px;
+  height: 48px;
+  padding: 10px;
+  background: rgba(79, 70, 229, 0.1);
+  border-radius: var(--radius-md);
+  /* Primary color filter to match indigo theme */
+  filter: invert(34%) sepia(85%) saturate(3015%) hue-rotate(227deg) brightness(88%) contrast(92%);
+}
+
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
 }

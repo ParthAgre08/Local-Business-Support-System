@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row gap-8">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-full lg:w-72 flex-shrink-0">
+        <div class="glass-card bg-white/80 p-6 rounded-3xl shadow-sm border border-secondary-100 flex flex-col sticky top-24">
+            <div class="flex items-center gap-4 mb-6 pb-6 border-b border-secondary-100">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-2xl flex items-center justify-center text-2xl font-bold shadow-md flex-shrink-0 transform -rotate-2">
+                    {{ username[0]|upper if username else 'O' }}
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-secondary-900 leading-tight flex items-center gap-1">
+                        {{ username }} <span class="text-blue-500 text-sm">✓</span>
+                    </h3>
+                    <p class="text-primary-600 text-sm font-semibold tracking-wide">Business Owner</p>
+                </div>
+            </div>
+
+            <!-- Business Meta (if passed in context) -->
+            {% if category %}
+            <div class="mb-6 space-y-3 p-4 bg-secondary-50 rounded-2xl border border-secondary-100 text-sm">
+                <div class="flex flex-col">
+                    <span class="text-secondary-400 text-xs font-bold uppercase tracking-wider">Category</span>
+                    <span class="font-medium text-secondary-800">{{ category }}</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-secondary-400 text-xs font-bold uppercase tracking-wider">Location</span>
+                    <span class="font-medium text-secondary-800 flex items-center gap-1"><span class="text-primary-500">📍</span> {{ location }}</span>
+                </div>
+            </div>
+            {% endif %}
+            
+            <nav class="w-full space-y-1 mt-auto">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-semibold transition-colors">
+                    <span class="text-lg w-6">📊</span> Overview
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                    <span class="text-lg w-6">🏢</span> My Businesses
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                    <span class="text-lg w-6">💰</span> Earnings
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                    <span class="text-lg w-6">📅</span> Appointments
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                    <span class="text-lg w-6">⭐</span> Reviews
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors mt-6 pt-6 border-t border-secondary-100">
+                    <span class="text-lg w-6">⚙️</span> Settings
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow space-y-8 min-w-0">
+        
+        <!-- Welcome banner -->
+        <header class="bg-gradient-to-r from-primary-600 to-purple-600 rounded-3xl p-8 lg:p-10 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <div class="relative z-10">
+                <h1 class="text-3xl md:text-4xl font-bold mb-3">Welcome back, {{ username }}! 📈</h1>
+                <p class="text-primary-100 text-lg max-w-2xl">Here's a bird's-eye view of how your businesses have been performing today.</p>
+            </div>
+        </header>
+
+        <!-- Stats grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">💰</div>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Total Earnings</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">$4,520</p>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">🏢</div>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Active Businesses</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">{{ active_businesses|default(0) }}</p>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">👁️</div>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Profile Views</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">342<span class="text-sm text-green-500 ml-2 font-medium">↑ 12%</span></p>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">📅</div>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">New Bookings</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">18</p>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Activity list -->
+            <section class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-secondary-100 p-8">
+                <div class="flex justify-between items-center mb-6 border-b border-secondary-100 pb-4">
+                    <h2 class="text-xl font-bold text-secondary-900">Recent Activity</h2>
+                    <a href="#" class="text-primary-600 font-medium hover:text-primary-700 text-sm">View Full Log</a>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl flex-shrink-0 mt-1">💵</div>
+                        <div>
+                            <p class="text-secondary-900 font-bold mb-1">Payment Received</p>
+                            <p class="text-secondary-600 text-sm">$120 from John Doe for Plumbing Service</p>
+                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">2 HOURS AGO</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl flex-shrink-0 mt-1">📅</div>
+                        <div>
+                            <p class="text-secondary-900 font-bold mb-1">New Appointment Booked</p>
+                            <p class="text-secondary-600 text-sm">Sarah Smith booked 'Tech Fixers' for tomorrow</p>
+                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">5 HOURS AGO</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl flex-shrink-0 mt-1">⭐</div>
+                        <div>
+                            <p class="text-secondary-900 font-bold mb-1">New 5-Star Review</p>
+                            <p class="text-secondary-600 text-sm italic">"Great service, highly recommend!" - Mike</p>
+                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">1 DAY AGO</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="bg-white rounded-3xl shadow-sm border border-secondary-100 p-8">
+                <h2 class="text-xl font-bold text-secondary-900 mb-6 border-b border-secondary-100 pb-4">Quick Actions</h2>
+                <div class="space-y-4">
+                    <a href="/addbusiness" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-primary-50 hover:border-primary-200 transition-all">
+                        <div class="w-10 h-10 rounded-full bg-white text-primary-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">➕</div>
+                        <div>
+                            <h3 class="font-bold text-secondary-900 group-hover:text-primary-700">Add Business</h3>
+                            <p class="text-secondary-500 text-xs">Register new service</p>
+                        </div>
+                    </a>
+                    <a href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-pink-50 hover:border-pink-200 transition-all">
+                        <div class="w-10 h-10 rounded-full bg-white text-pink-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">📢</div>
+                        <div>
+                            <h3 class="font-bold text-secondary-900 group-hover:text-pink-700">Create Promotion</h3>
+                            <p class="text-secondary-500 text-xs">Offer discounts</p>
+                        </div>
+                    </a>
+                    <a href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-blue-50 hover:border-blue-200 transition-all">
+                        <div class="w-10 h-10 rounded-full bg-white text-blue-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">✉️</div>
+                        <div>
+                            <h3 class="font-bold text-secondary-900 group-hover:text-blue-700">Message Clients</h3>
+                            <p class="text-secondary-500 text-xs">Send updates</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+{% endblock %}

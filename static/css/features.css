@@ -1,67 +1,114 @@
-.features{
-    background-color: white;
-    /* background:linear-gradient(90deg,#e4e9ec,#faf7f7,#e4e9ec);; */
-    border: 2px solid #f1f1f1;
-    border-radius: 10px;
-    /* padding:100px 10%; */
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 80px;
-    text-align:center;
-    border-radius: 10px;
-    margin-left: 4px;
-    margin-right: 4px;
-    margin-top: 15px;
+/* features.css - Modern Startup Bento Cards */
+
+.features {
+  padding: 100px 24px;
+  max-width: var(--container-width);
+  margin: 0 auto;
 }
 
-.features-heading h2{
-    font-size:40px;
-    margin-bottom:20px;
-}
-.feature-card h3{
-    font-size:25px;
-    margin-bottom:20px;
-}
-.feature-card p{
-    font-size:19px;
-    margin-bottom:20px;
+.features-heading {
+  text-align: center;
+  margin-bottom: 64px;
 }
 
-.features-heading p{
-    font-size:22px;
-    color:#666;
-    margin-bottom:50px;
+.features-heading h2 {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
 }
 
-.features-container{
-    display:flex;
-    justify-content:space-between;
-    gap:30px;
+.features-heading p {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin: 0 auto;
 }
 
-.feature-card{
-    background:white;
-    box-shadow: 0 0 20px rgb(177, 227, 252);
-    padding:30px;
-    border-radius:10px;
-    font-size: 20px;
-    transition: all 0.3s ease;  
-}
-.feature-card:hover{
-    transform: translateY(-8px);
-    transition: 0.3s;
-    box-shadow:0 0 20px rgb(115, 226, 246);
+.features-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
 }
 
-.feature-card .icon{
-    height: 60px;
-    width: 60px ;
-    /* margin-bottom:15px; */
+.features-container .redirect {
+  text-decoration: none;
+  display: block;
 }
 
-.redirect{
-
-    text-decoration:none;
-    color:black;    
+.feature-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  height: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
 }
 
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-card .icon1 {
+  width: 56px;
+  height: 56px;
+  background: rgba(79, 70, 229, 0.1);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .icon1 {
+  background: var(--accent-base);
+}
+
+.feature-card .icon {
+  width: 28px;
+  height: 28px;
+  filter: invert(34%) sepia(85%) saturate(3015%) hue-rotate(227deg) brightness(88%) contrast(92%);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover .icon {
+  filter: brightness(0) invert(1);
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.feature-card p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}

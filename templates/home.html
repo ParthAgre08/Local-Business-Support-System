@@ -1,131 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/body.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/herosection.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/features.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/why_section.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/calltoaction.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/login.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/register.css')}}">
-    <style>
-.alert{
-    padding:12px;
-    margin:10px;
-    border-radius:6px;
-    font-weight:500;
-}
+{% extends "base.html" %}
 
-.success{
-    background-color:#d4edda;
-    color:#155724;
-    border:1px solid #c3e6cb;
-}
-
-.error{
-    background-color:#f8d7da;
-    color:#721c24;
-    border:1px solid #f5c6cb;
-}
-</style>
-</head>
-<body>
-    
-
-   {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert {{ category }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-<header>
-
-    <nav class="navbar">
-
-        <!-- Logo -->
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
-            <span>Local Business Hub</span>
+{% block content %}
+    <!-- 2. Hero Section -->
+    <section class="relative pt-8 pb-20 lg:pt-16 lg:pb-32 overflow-hidden bg-transparent">
+        <!-- Background Decorative Blobs -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+            <div class="absolute top-[0%] left-[-10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
         </div>
 
-        <!-- Navigation Links -->
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/search">Search Businesses</a></li>
-            <li><a href="/addbusiness">Add Business</a></li>
-            <li><a href="/categories">Categories</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-
-        <!-- Auth Buttons -->
-        <div class="nav-auth">
-
-    {% if username %}
-        
-        <div class="profile-section">
-            <a href="/customer_dashboard" class="profile-btn">
-                <span class="icon">👤</span> <span>{{ username }}</span>
-            </a>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative pt-12">
+            <div class="text-center max-w-4xl mx-auto opacity-0 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 border border-primary-100 text-primary-600 text-sm font-medium mb-8 shadow-sm">
+                    <span class="flex h-2 w-2 rounded-full bg-primary-600"></span>
+                    Welcome back, {{ username }}!
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-extrabold text-secondary-900 tracking-tight leading-tight mb-6">
+                    Connect With & Support <br class="hidden lg:block"/>
+                    <span class="gradient-text">Local Businesses</span>
+                </h1>
+                <p class="text-lg lg:text-xl text-secondary-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Explore trusted shops, amazing services, and brilliant local entrepreneurs right in your neighborhood. Help your robust local economy thrive.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="/search" class="w-full sm:w-auto px-8 py-4 rounded-full bg-primary-600 text-white font-semibold text-lg hover:bg-primary-700 hover:shadow-xl hover:shadow-primary-500/30 transition-all transform hover:-translate-y-1">
+                        Explore Businesses
+                    </a>
+                    {% if not is_owner %}
+                    <a href="/addbusiness" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-secondary-800 border border-secondary-200 font-semibold text-lg hover:bg-secondary-50 hover:border-secondary-300 transition-all shadow-sm">
+                        Add Your Business
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-20 relative mx-auto max-w-5xl opacity-0 animate-fade-in-up delay-200">
+                <div class="glass-card rounded-3xl p-4 lg:p-8 shadow-xl border border-white/50">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-secondary-100 relative">
+                        <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary-500/10 to-purple-500/10 -z-10 blur-xl"></div>
+                        <div class="p-4">
+                            <h3 class="text-4xl font-bold text-primary-600 mb-2">5,000+</h3>
+                            <p class="text-secondary-500 font-medium">Local Shops</p>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-4xl font-bold text-primary-600 mb-2">12k+</h3>
+                            <p class="text-secondary-500 font-medium">Active Users</p>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-4xl font-bold text-primary-600 mb-2">50+</h3>
+                            <p class="text-secondary-500 font-medium">Categories</p>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-4xl font-bold text-primary-600 mb-2">4.9/5</h3>
+                            <p class="text-secondary-500 font-medium">Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <a href="/logout" class="logout-btn">Logout</a>
-
-    {% else %}
-        
-        <a href="/login" class="login-btn">Login</a>
-        <a href="/register" class="register-btn">Register</a>
-
-    {% endif %}
-
-</div>
-
-    </nav>
-</header>
-
-
- <footer class="footer">
-
-    <div class="footer-container">
-
-        <!-- Brand -->
-        <div class="footer-brand">
-            <h2>Local Business Hub</h2>
-            <p>Connecting people with trusted local businesses in their community.</p>
+    <!-- 3. Scrolling / Running Message Section -->
+    <div class="bg-primary-600 py-4 overflow-hidden flex border-y border-primary-500">
+        <div class="flex whitespace-nowrap animate-marquee">
+            <div class="flex items-center text-white text-lg font-semibold mx-4 gap-12">
+                <span>🚀 Support Local Economy</span>
+                <span>⭐ Discover Hidden Gems</span>
+                <span>🤝 Connect directly with owners</span>
+                <span>🛍️ Shop Local, Buy Local</span>
+                <span>📈 Grow your business online</span>
+            </div>
+            <div class="flex items-center text-white text-lg font-semibold mx-4 gap-12">
+                <span>🚀 Support Local Economy</span>
+                <span>⭐ Discover Hidden Gems</span>
+                <span>🤝 Connect directly with owners</span>
+                <span>🛍️ Shop Local, Buy Local</span>
+                <span>📈 Grow your business online</span>
+            </div>
+             <div class="flex items-center text-white text-lg font-semibold mx-4 gap-12">
+                <span>🚀 Support Local Economy</span>
+                <span>⭐ Discover Hidden Gems</span>
+                <span>🤝 Connect directly with owners</span>
+                <span>🛍️ Shop Local, Buy Local</span>
+                <span>📈 Grow your business online</span>
+            </div>
         </div>
-
-        <!-- Connect With Us -->
-        <div class="footer-connect">
-            <h3>Connect With Us</h3>
-            <a href="#">Instagram</a>
-            <a href="#">Facebook</a>
-            <a href="#">LinkedIn</a>
-            <a href="#">Twitter</a>
-        </div>
-
-        <!-- Contact -->
-        <div class="footer-contact">
-            <h3>Contact</h3>
-            <p>Email: support@localhub.com</p>
-            <p>Phone: +91 9876543210</p>
-        </div>
-
     </div>
 
-    <div class="footer-bottom">
-        <p>© 2026 Local Business Hub | All Rights Reserved</p>
-    </div>
+    <!-- 4. Features Section -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-primary-600 font-semibold tracking-wide uppercase text-sm mb-3">Platform Features</h2>
+                <h3 class="text-3xl md:text-5xl font-bold text-secondary-900 mb-6 tracking-tight">Everything you need to <span class="gradient-text">connect locally</span></h3>
+                <p class="text-lg text-secondary-600">Our platform bridges the gap between customers and local entrepreneurs with powerful, easy-to-use tools.</p>
+            </div>
 
-</footer>
-</body>
-</html>
+            <div class="grid md:grid-cols-3 gap-8">
+                <a href="/search" class="group bg-secondary-50 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-primary-500/10 border border-secondary-100 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 border border-blue-200 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+                        <span class="text-3xl">🔍</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-secondary-900 mb-3 group-hover:text-primary-600 transition-colors">Discover Businesses</h4>
+                    <p class="text-secondary-600 leading-relaxed">Find nearby shops, services, and businesses in your area quickly and seamlessly. Filter by location and ratings.</p>
+                </a>
+                <a href="/addbusiness" class="group bg-secondary-50 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 border border-secondary-100 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-6 border border-purple-200 group-hover:scale-110 group-hover:-rotate-3 transition-transform">
+                        <span class="text-3xl">🏪</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-secondary-900 mb-3 group-hover:text-purple-600 transition-colors">Business Platform</h4>
+                    <p class="text-secondary-600 leading-relaxed">Local entrepreneurs can easily list their businesses, manage their profile, and reach thousands of local customers.</p>
+                </a>
+                <a href="/category" class="group bg-secondary-50 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-pink-500/10 border border-secondary-100 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6 border border-pink-200 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+                        <span class="text-3xl">🗂️</span>
+                    </div>
+                    <h4 class="text-xl font-bold text-secondary-900 mb-3 group-hover:text-pink-600 transition-colors">Smart Categories</h4>
+                    <p class="text-secondary-600 leading-relaxed">Browse visually through intuitive categories. From fine dining restaurants to expert electronics repair, find exactly what you need.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
