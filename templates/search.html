@@ -163,8 +163,8 @@ function setPill(el, cat) {
             <div class="record-image">
                 <img src="{{ url_for('static', filename='uploads/' + business[5]) }}" alt="{{ business[1] }}">
                 
-                {% if business[9] and business[10] %}
-                    {% if business[8] %}
+                {% if business[10] and business[11] %}
+                    {% if business[9] %}
                         <div class="status-badge status-open">
                             <span class="icon"></span> Open Now
                         </div>
@@ -188,9 +188,9 @@ function setPill(el, cat) {
                 <p class="business-category">{{ business[4] }}</p>
                 <p class="business-location">📍 {{ business[3] }}</p>
                 
-                {% if business[9] and business[10] %}
+                {% if business[10] and business[11] %}
                 <p class="time-info">
-                    🕒 {{ business[9] }} - {{ business[10] }}
+                    🕒 {{ business[10] }} - {{ business[11] }}
                 </p>
                 {% endif %}
                 
