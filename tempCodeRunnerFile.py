@@ -1,1 +1,290 @@
-owner_dashboard
+from flask import Flask,render_template,redirect,url_for,request,flash,session,jsonify
+from httpcore import __name
+from flask_mysqldb import MySQL
+import os 
+from werkzeug.utils import secure_filename 
+
+#craeting the obj of flask class and save into app or we also say creating the flask app 
+app = Flask(__name__)
+
+# Secret key is required to enable sessions and flash messages in Flask
+app.secret_key = "mysecretkey"
+
+# MySQL Config
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'          # your username
+app.config['MYSQL_PASSWORD'] = '123456789'  # your password
+app.config['MYSQL_DB'] = 'user'      # your DB name
+
+mysql = MySQL(app)
+
+# creating the upload folder (folder path config)
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.context_processor
+def inject_owner_status():
+    is_owner = False
+    if 'email' in session:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT 1 FROM business_record WHERE email = %s LIMIT 1", (session['email'],))
+        if cur.fetchone():
+            is_owner = True
+        cur.close()
+    return dict(is_owner=is_owner)
+
+
+
+@app.route("/",methods=['GET','POST'])
+def main():
+    if request.method == 'POST':
+        flash("Login Successful", "success")# Flash is used to show temporary messages on a web page using session storage.
+        return redirect(url_for("home"))
+    return render_template("main.html")
+
+
+@app.route("/login",methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        cur = mysql.connection.cursor()
+        cur.execute(F"SELECT * FROM user WHERE Email = '{email}' && Password = '{password}'")
+        data = cur.fetchone()
+        print(email," ",password)
+
+        if data:
+            session['email'] = email
+            session['password'] = password
+            session['username'] = data[3]
+            flash("Login Successful", "success")
+            return redirect("/home")
+           
+        else:
+            flash("Login Unsuccesfull !", "error")
+            return redirect("/login")
+
+    return render_template("login.html")
+
+@app.route("/register",methods=["GET","POST"])
+def register():
+    if(request.method == "POST"):
+        session['email'] = request.form.get("email")
+        session['password'] = request.form.get("password")
+        session['username'] = request.form.get("username")
+
+        cur = mysql.connection.cursor()
+        cur.execute(f"INSERT INTO user (Email,Password,Username) values ('{session['email']}','{session['password']}','{session['username']}')")
+
+        mysql.connection.commit()
+        cur.close()
+        flash("Register Successful", "success")
+        return redirect("/home")
+    return render_template("register.html")
+
+
+@app.route("/owner_dashboard")
+def owner_dashboard():
+    if 'email' not in session:
+        return redirect('/login')
+        
+    email = session['email']
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM business_record WHERE email = %s", (email,))
+    active_businesses_count = cur.fetchone()[0]
+    cur.close()
+    
+    return render_template("owner_dashboard.html", username=session['username'], active_businesses=active_businesses_count)
+
+
+
+@app.route("/home")
+def home():
+    return render_template("home.html",username = session['username'])
+
+
+@app.route('/customer_dashboard')
+def customer_dashboard():
+    if 'username' not in session:
+        return redirect('/login')
+
+    email = session.get('email')
+    cur = mysql.connection.cursor()
+    
+    # Orders count
+    cur.execute("SELECT COUNT(*) FROM customer_dashboard_recent_orders WHERE Email = %s", (email,))
+    orders_count = cur.fetchone()[0]
+    
+    # Fav count
+    cur.execute("SELECT COUNT(*) FROM customer_dashboard_favorite_shops WHERE Email = %s", (email,))
+    fav_count = cur.fetchone()[0]
+    
+    # Reviews count
+    cur.execute("SELECT COUNT(*) FROM customer_dashboard_reviews WHERE Email = %s", (email,))
+    reviews_count = cur.fetchone()[0]
+    
+    # Recent orders
+    cur.execute("SELECT id, shop_name, order_detail, Order_Status FROM customer_dashboard_recent_orders WHERE Email = %s ORDER BY Id DESC LIMIT 3", (email,))
+    recent_orders_raw = cur.fetchall()
+    cur.close()
+    
+    recent_orders = []
+    for row in recent_orders_raw:
+        recent_orders.append({
+            'id': row[0],
+            'business_name': row[1],
+            'items_summary': row[2],
+            'status': row[3],
+            'status_type': 'delivered' if row[3] == 'Delivered' else ('service' if row[3] == 'Service Complete' else 'pending'),
+            'created_at': 'recently',
+            'has_review': False
+        })
+
+    return render_template('customer_dashboard.html', 
+                            username=session['username'],
+                            orders_count=orders_count,
+                            fav_count=fav_count,
+                            reviews_count=reviews_count,
+                            recent_orders=recent_orders)
+
+
+
+@app.route("/addbusiness" , methods = ["GET","POST"])
+def addbusiness():
+    if 'email' not in session:
+        flash("Please log in to add a business", "error")
+        return redirect('/login')
+
+    if request.method == 'POST':
+        #getting the form section details 
+        name = request.form.get("name")
+        location = request.form.get("location")
+        description = request.form.get("description")
+        category = request.form.get("category")
+        subcategory = request.form.get("subcategory")
+        starting_time = request.form.get("starting_time")
+        closing_time = request.form.get("closing_time")
+        email = session['email']
+
+        #getting the files uploaded by the user 
+        image = request.files['image']
+
+        if image and image.filename != "":
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'] ,filename))
+
+        else:
+            filename = 'default.jpg'
+
+        cur = mysql.connection.cursor()
+        cur.execute(
+            f"INSERT INTO business_record (name,description,location,category,images,starting_time,closing_time,email,subcategory) "
+            f"VALUES ('{name}','{description}','{location}','{category}','{filename}','{starting_time}','{closing_time}','{email}','{subcategory}')"
+        )
+        mysql.connection.commit()
+        cur.close()
+
+        # return redirect(url_for('owner_dashboard',name = name , location=location, description = description , category = category))
+        return redirect(url_for("owner_dashboard"))
+    return render_template("addbusiness.html")
+
+
+@app.route("/search",methods =["GET", "POST"])
+def search():
+    query = request.args.get("query")
+    location = request.args.get("location")
+    category = request.args.get("category")
+    subcategory = request.args.get("subcategory")
+
+    cur = mysql.connection.cursor()
+    # Explicitly select columns to maintain consistent indexing even if table structure changes
+    sql = "SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record WHERE 1=1"
+    params = []
+    
+    if query:
+        sql += " AND (name LIKE %s OR description LIKE %s)"
+        params.append(f"%{query}%")
+        params.append(f"%{query}%")
+
+    if location and location != "":
+        sql += " AND location = %s"
+        params.append(location)
+
+    if category and category != "":
+        sql += " AND category = %s"
+        params.append(category)
+
+    if subcategory and subcategory != "All" and subcategory != "":
+        sql += " AND subcategory = %s"
+        params.append(subcategory)
+
+    if not params:
+        cur.execute("SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record LIMIT 6") 
+        results_raw = cur.fetchall()
+    else:
+        cur.execute(sql, tuple(params))
+        results_raw = cur.fetchall()
+        
+    import datetime
+    now_dt = datetime.datetime.now()
+    now_td = datetime.timedelta(hours=now_dt.hour, minutes=now_dt.minute, seconds=now_dt.second)
+    
+    results = []
+    for row in results_raw:
+        row_list = list(row)
+        is_open = False
+        start_str = ""
+        close_str = ""
+        
+        # With explicit SELECT:
+        # 0:id, 1:name, 2:description, 3:location, 4:category, 5:subcategory, 6:images, 7:starting_time, 8:closing_time, 9:email
+        if len(row_list) > 8:
+            start_td = row_list[7]
+            close_td = row_list[8]
+            
+            if isinstance(start_td, datetime.timedelta) and isinstance(close_td, datetime.timedelta):
+                if start_td <= close_td:
+                    is_open = start_td <= now_td <= close_td
+                else:
+                    is_open = now_td >= start_td or now_td <= close_td
+                    
+                def format_td(td):
+                    total_seconds = int(td.total_seconds())
+                    hours = total_seconds // 3600
+                    minutes = (total_seconds % 3600) // 60
+                    period = "AM"
+                    if hours >= 12:
+                        period = "PM"
+                        if hours > 12:
+                            hours -= 12
+                    if hours == 0:
+                        hours = 12
+                    return f"{hours}:{minutes:02d} {period}"
+                    
+                start_str = format_td(start_td)
+                close_str = format_td(close_td)
+                
+        # Append extra info: index 10 is is_open, 11 is start_str, 12 is close_str
+        while len(row_list) <= 9:
+            row_list.append(None)
+        row_list.append(is_open)
+        row_list.append(start_str)
+        row_list.append(close_str)
+        
+        # Sanitize row_list for JSON: convert timedeltas to strings
+        final_row = []
+        for item in row_list:
+            if isinstance(item, datetime.timedelta):
+                final_row.append(str(item))
+            elif isinstance(item, (datetime.date, datetime.datetime)):
+                final_row.append(item.isoformat())
+            else:
+                final_row.append(item)
+        results.append(final_row)
+        
+    user_favorites = []
+    if 'email' in session:
+        cur.execute("SELECT shop_name FROM customer_dashboard_favorite_shops WHERE Email = %s", (session['email'],))
+        favs = cur.fetchall()
+        user_favorites = [f[0] for f in favs]

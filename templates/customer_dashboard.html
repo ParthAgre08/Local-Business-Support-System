@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Local Business Hub</title>
-    <!-- Keep Poppins for the overall matching theme -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='css/customer.css')}}">
 </head>
-<body>
+<body> -->
 
-    <header>
+    <!-- <header>
         <nav class="navbar">
             <div class="logo">
                 <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
@@ -48,7 +48,16 @@
                 {% endif %}
             </div>
         </nav>
-    </header>
+    </header> -->
+
+    {% extends "base.html" %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/navbar2.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/footer.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/customer.css')}}">
 
     <div class="dashboard-shell">
 
@@ -188,3 +197,4 @@
     </script>
 </body>
 </html>
+{% endblock %}

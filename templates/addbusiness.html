@@ -19,30 +19,76 @@
                 <div class="input-wrapper">
                     <select id="category_select" name="category" class="form-control" required onchange="toggleCustomCategory()">
                         <option value="" disabled selected>Select a category</option>
-                        <option value="Food">Food</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Services">Services</option>
-                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Food & Home-Made Products">🍽️ Food & Home-Made Products</option>
+                        <option value="Electronics">💻 Electronics</option>
+                        <option value="Services">🔧 Services</option>
+                        <option value="Retail">🛍️ Retail</option>
+                        <option value="Fashion">👗 Fashion</option>
+                        <option value="Beauty">✨ Beauty</option>
+                        <option value="Automobile">🚗 Automobile</option>
+                        <option value="Home Services">🏠 Home Services</option>
+                        <option value="Agriculture">🚜 Agriculture</option>
+                        <option value="Pharmacy">💊 Pharmacy</option>
                         <option value="Other">Other (Customize)</option>
                     </select>
                     <input type="text" id="custom_category" name="custom_category" class="form-control" placeholder="Enter custom category" style="display: none; margin-top: 10px;">
                 </div>
             </div>
 
+            <div class="form-group" id="subcategory_group" style="display: none;">
+                <label for="subcategory">Subcategory</label>
+                <div class="input-wrapper">
+                    <select id="subcategory_select" name="subcategory" class="form-control">
+                        <option value="" selected>Select a subcategory</option>
+                    </select>
+                </div>
+            </div>
+
             <script>
+                const subcategoryMapping = {
+                    'Food & Home-Made Products': ['Cakes and Bakery', 'Tiffin / Mess', 'Snacks / Papad / Pickles'],
+                    'Electronics': ['Mobile Repair', 'Laptop Repair'],
+                    'Services': ['Electrician', 'Plumber', 'Tutor'],
+                    'Retail': ['Grocery', 'Stationery'],
+                    'Fashion': ['Tailor', 'Boutique'],
+                    'Beauty': ['Male Salon', 'Female Parlour'],
+                    'Automobile': ['Bike Repair', 'Car Repair'],
+                    'Home Services': ['Carpenter', 'Painter'],
+                    'Agriculture': ['Dairy', 'Vegetables']
+                };
+
                 function toggleCustomCategory() {
                     var selectElement = document.getElementById('category_select');
                     var customInput = document.getElementById('custom_category');
+                    var subGroup = document.getElementById('subcategory_group');
+                    var subSelect = document.getElementById('subcategory_select');
+                    
                     if (selectElement.value === 'Other') {
                         customInput.style.display = 'block';
                         customInput.required = true;
                         customInput.name = 'category';
                         selectElement.name = 'category_ignore';
+                        subGroup.style.display = 'none';
+                        subSelect.innerHTML = '<option value="" selected>Select a subcategory</option>';
                     } else {
                         customInput.style.display = 'none';
                         customInput.required = false;
                         customInput.name = 'custom_category';
                         selectElement.name = 'category';
+                        
+                        // Populate subcategories
+                        const cat = selectElement.value;
+                        if (cat && subcategoryMapping[cat]) {
+                            subGroup.style.display = 'block';
+                            let html = '<option value="" selected>Select a subcategory</option>';
+                            subcategoryMapping[cat].forEach(sub => {
+                                html += `<option value="${sub}">${sub}</option>`;
+                            });
+                            subSelect.innerHTML = html;
+                        } else {
+                            subGroup.style.display = 'none';
+                            subSelect.innerHTML = '<option value="" selected>Select a subcategory</option>';
+                        }
                     }
                 }
             </script>
@@ -54,7 +100,7 @@
                 </div>
             </div>
 
-            <div class="form-group" style="display: flex; gap: 20px;">
+            <div class="form-group time-group">
                 <div style="flex: 1;">
                     <label for="starting_time">Opening Time</label>
                     <div class="input-wrapper">

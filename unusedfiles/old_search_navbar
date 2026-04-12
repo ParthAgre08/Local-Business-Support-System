@@ -1,0 +1,40 @@
+ <header>
+        <nav class="navbar">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo">
+                <span>Local Business Hub</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/business">Businesses</a></li>
+                <li><a href="/categories">Categories</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+
+            <!-- Auth Buttons -->
+            <div class="nav-auth" style="display:flex; align-items:center;">
+                {% if username %}
+                {% if is_owner %}
+                <div class="profile-section" style="margin-right: 10px;">
+                    <a href="/owner_dashboard" class="profile-btn" style="background:#f3e8ff; color:#7e22ce;">
+                        <span class="icon">🏢</span> <span>Dashboard</span>
+                    </a>
+                </div>
+                {% endif %}
+                <div class="profile-section">
+                    <a href="/customer_dashboard" class="profile-btn active">
+                        <span class="icon">👤</span> <span>{{ username }}</span>
+                    </a>
+                </div>
+                <a href="/logout" class="logout-btn" style="margin-left:10px;">Logout</a>
+                {% else %}
+                <a href="/login" class="login-btn">Login</a>
+                <a href="/register" class="register-btn">Register</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header> 

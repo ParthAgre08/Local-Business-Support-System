@@ -162,6 +162,7 @@ def addbusiness():
         location = request.form.get("location")
         description = request.form.get("description")
         category = request.form.get("category")
+        subcategory = request.form.get("subcategory")
         starting_time = request.form.get("starting_time")
         closing_time = request.form.get("closing_time")
         email = session['email']
@@ -178,8 +179,8 @@ def addbusiness():
 
         cur = mysql.connection.cursor()
         cur.execute(
-            f"INSERT INTO business_record (name,description,location,category,images,starting_time,closing_time,email) "
-            f"VALUES ('{name}','{description}','{location}','{category}','{filename}','{starting_time}','{closing_time}','{email}')"
+            f"INSERT INTO business_record (name,description,location,category,images,starting_time,closing_time,email,subcategory) "
+            f"VALUES ('{name}','{description}','{location}','{category}','{filename}','{starting_time}','{closing_time}','{email}','{subcategory}')"
         )
         mysql.connection.commit()
         cur.close()
@@ -194,25 +195,32 @@ def search():
     query = request.args.get("query")
     location = request.args.get("location")
     category = request.args.get("category")
+    subcategory = request.args.get("subcategory")
 
     cur = mysql.connection.cursor()
-    sql = "SELECT * FROM business_record WHERE 1=1"
+    # Explicitly select columns to maintain consistent indexing even if table structure changes
+    sql = "SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record WHERE 1=1"
     params = []
     
     if query:
-        sql += " AND name LIKE %s"
+        sql += " AND (name LIKE %s OR description LIKE %s)"
+        params.append(f"%{query}%")
         params.append(f"%{query}%")
 
-    if location:
+    if location and location != "":
         sql += " AND location = %s"
         params.append(location)
 
-    if category:
+    if category and category != "":
         sql += " AND category = %s"
         params.append(category)
 
+    if subcategory and subcategory != "All" and subcategory != "":
+        sql += " AND subcategory = %s"
+        params.append(subcategory)
+
     if not params:
-        cur.execute("SELECT * FROM business_record LIMIT 6") 
+        cur.execute("SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record LIMIT 6") 
         results_raw = cur.fetchall()
     else:
         cur.execute(sql, tuple(params))
@@ -229,10 +237,11 @@ def search():
         start_str = ""
         close_str = ""
         
-        # Check if the row has starting_time and closing_time (index 6 and 7)
-        if len(row_list) > 7:
-            start_td = row_list[6]
-            close_td = row_list[7]
+        # With explicit SELECT:
+        # 0:id, 1:name, 2:description, 3:location, 4:category, 5:subcategory, 6:images, 7:starting_time, 8:closing_time, 9:email
+        if len(row_list) > 8:
+            start_td = row_list[7]
+            close_td = row_list[8]
             
             if isinstance(start_td, datetime.timedelta) and isinstance(close_td, datetime.timedelta):
                 if start_td <= close_td:
@@ -256,13 +265,23 @@ def search():
                 start_str = format_td(start_td)
                 close_str = format_td(close_td)
                 
-        # Append extra info: index 8 is is_open, 9 is start_str, 10 is close_str
-        while len(row_list) <= 7:
+        # Append extra info: index 10 is is_open, 11 is start_str, 12 is close_str
+        while len(row_list) <= 9:
             row_list.append(None)
         row_list.append(is_open)
         row_list.append(start_str)
         row_list.append(close_str)
-        results.append(row_list)
+        
+        # Sanitize row_list for JSON: convert timedeltas to strings
+        final_row = []
+        for item in row_list:
+            if isinstance(item, datetime.timedelta):
+                final_row.append(str(item))
+            elif isinstance(item, (datetime.date, datetime.datetime)):
+                final_row.append(item.isoformat())
+            else:
+                final_row.append(item)
+        results.append(final_row)
         
     user_favorites = []
     if 'email' in session:
@@ -272,6 +291,13 @@ def search():
         
     cur.close()
     
+    # Handle AJAX/Fetch request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.args.get('ajax') == '1':
+        return jsonify({
+            'results': results,
+            'user_favorites': user_favorites
+        })
+
     return render_template("search.html", username=session.get('username'), results=results, user_favorites=user_favorites)
 
 @app.route('/toggle_favorite', methods=['POST'])
