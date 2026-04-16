@@ -332,6 +332,93 @@ def toggle_favorite():
     cur.close()
     return jsonify({'success': True, 'action': action})
 
+@app.route('/manage_products')
+def manage_products():
+    if 'email' not in session:
+        return redirect('/login')
+    
+    email = session['email']
+    cur = mysql.connection.cursor()
+    
+    # Get owner's business names
+    cur.execute("SELECT name FROM business_record WHERE email = %s", (email,))
+    businesses_raw = cur.fetchall()
+    businesses = [b[0] for b in businesses_raw]
+    
+    # Get all products for this owner
+    cur.execute("SELECT id, shop_name, owner_email, product_name, description, price, product_image, stock, created_at FROM products WHERE owner_email = %s ORDER BY created_at DESC", (email,))
+    products = cur.fetchall()
+    cur.close()
+    
+    return render_template("manage_products.html", username=session['username'], businesses=businesses, products=products)
+
+
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    if 'email' not in session:
+        return redirect('/login')
+    
+    shop_name = request.form.get('shop_name')
+    product_name = request.form.get('product_name')
+    description = request.form.get('description', '')
+    price = request.form.get('price')
+    stock = request.form.get('stock', 0)
+    email = session['email']
+    
+    # Handle image upload
+    image = request.files.get('product_image')
+    if image and image.filename != '':
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    else:
+        filename = 'default.jpg'
+    
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "INSERT INTO products (shop_name, owner_email, product_name, description, price, product_image, stock) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+        (shop_name, email, product_name, description, price, filename, stock)
+    )
+    mysql.connection.commit()
+    cur.close()
+    
+    flash("Product added successfully!", "success")
+    return redirect('/manage_products')
+
+
+@app.route('/delete_product/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    if 'email' not in session:
+        return redirect('/login')
+    
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM products WHERE id = %s AND owner_email = %s", (product_id, session['email']))
+    mysql.connection.commit()
+    cur.close()
+    
+    flash("Product deleted!", "success")
+    return redirect('/manage_products')
+
+
+@app.route('/shop/<shop_name>/products')
+def shop_products(shop_name):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, shop_name, owner_email, product_name, description, price, product_image, stock, created_at FROM products WHERE shop_name = %s ORDER BY created_at DESC", (shop_name,))
+    products = cur.fetchall()
+    cur.close()
+    
+    return render_template("shop_products.html", shop_name=shop_name, products=products, username=session.get('username'))
+
+
+@app.route('/category')
+def category():
+    return render_template('category.html', username=session.get('username'))
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html', username=session.get('username'))
+
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)

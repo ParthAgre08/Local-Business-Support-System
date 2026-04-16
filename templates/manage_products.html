@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+
+<div class="manage-products-wrap">
+
+    <!-- Page Header -->
+    <div class="products-page-header" style="padding-left:0;">
+        <h1>📦 Manage Products</h1>
+        <p>Add products to your shops so customers can browse and order them.</p>
+    </div>
+
+    <!-- Add Product Form -->
+    <div class="add-product-form">
+        <h2>➕ Add New Product</h2>
+        <form action="/add_product" method="POST" enctype="multipart/form-data">
+            <div class="form-grid">
+
+                <!-- Select Shop -->
+                <div class="form-group full-width">
+                    <label for="shop_name">Select Your Shop</label>
+                    <select name="shop_name" id="shop_name" required>
+                        <option value="">-- Choose a business --</option>
+                        {% for biz in businesses %}
+                        <option value="{{ biz }}">{{ biz }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Product Name -->
+                <div class="form-group">
+                    <label for="product_name">Product Name</label>
+                    <input type="text" name="product_name" id="product_name" placeholder="e.g. Mango Pickle" required>
+                </div>
+
+                <!-- Price -->
+                <div class="form-group">
+                    <label for="price">Price (₹)</label>
+                    <input type="number" name="price" id="price" placeholder="e.g. 250" step="0.01" min="0" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group full-width">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" placeholder="Describe your product..." rows="3"></textarea>
+                </div>
+
+                <!-- Product Image -->
+                <div class="form-group">
+                    <label for="product_image">Product Image</label>
+                    <input type="file" name="product_image" id="product_image" accept="image/*">
+                </div>
+
+                <!-- Stock -->
+                <div class="form-group">
+                    <label for="stock">Stock Available</label>
+                    <input type="number" name="stock" id="stock" placeholder="e.g. 20" min="0" required>
+                </div>
+
+                <button type="submit" class="btn-add-product">🚀 Add Product</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing Products -->
+    <div class="existing-products">
+        <h2>📋 Your Products</h2>
+
+        {% if products|length > 0 %}
+        <div style="overflow-x:auto;">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Shop</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='uploads/' + p[6]) }}" alt="{{ p[3] }}" class="product-thumb">
+                        </td>
+                        <td><strong>{{ p[3] }}</strong></td>
+                        <td>{{ p[1] }}</td>
+                        <td>₹{{ p[5] }}</td>
+                        <td>{{ p[7] }}</td>
+                        <td>
+                            {% if p[7] > 5 %}
+                                <span class="stock-pill stock-available">Available</span>
+                            {% elif p[7] > 0 %}
+                                <span class="stock-pill stock-limited">Limited</span>
+                            {% else %}
+                                <span class="stock-pill stock-out">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="/delete_product/{{ p[0] }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this product?')">
+                                <button type="submit" class="btn-delete-product">🗑️ Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="products-empty">
+            <div class="empty-icon">🛒</div>
+            <h2>No products yet</h2>
+            <p>Add your first product using the form above!</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

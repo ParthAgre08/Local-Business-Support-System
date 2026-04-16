@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* ===== Categories Page Styles ===== */
+    .cat-page-header {
+        text-align: center;
+        padding: 20px 20px 40px;
+    }
+    .cat-page-header .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #eef2ff, #f3e8ff);
+        border: 1px solid #e0e7ff;
+        color: #4f46e5;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+    .cat-page-header .badge span {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #4f46e5;
+    }
+    .cat-page-header h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(28px, 5vw, 48px);
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px;
+        line-height: 1.2;
+    }
+    .cat-page-header h1 em {
+        font-style: normal;
+        background: linear-gradient(to right, #4f46e5, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .cat-page-header p {
+        color: #64748b;
+        font-size: 16px;
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Grid */
+    .cat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+
+    /* Card */
+    .cat-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        transition: all 0.35s cubic-bezier(.4,0,.2,1);
+        cursor: pointer;
+        position: relative;
+    }
+    .cat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px -12px rgba(79,70,229,0.15);
+        border-color: #c7d2fe;
+    }
+
+    .cat-card-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 24px 16px;
+    }
+    .cat-icon-wrap {
+        width: 56px; height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        flex-shrink: 0;
+        transition: transform 0.3s;
+    }
+    .cat-card:hover .cat-icon-wrap { transform: scale(1.12) rotate(4deg); }
+    .cat-card-top h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 4px;
+    }
+    .cat-card-top small {
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .cat-arrow {
+        position: absolute; top: 28px; right: 24px;
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #64748b;
+        transition: all 0.3s;
+    }
+    .cat-card.open .cat-arrow {
+        transform: rotate(180deg);
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    /* Subcategory drawer */
+    .subcat-drawer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(.4,0,.2,1), padding 0.3s;
+        padding: 0 24px;
+        background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+        border-top: 0px solid transparent;
+    }
+    .cat-card.open .subcat-drawer {
+        max-height: 400px;
+        padding: 16px 24px 24px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .subcat-drawer p.drawer-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        margin: 0 0 12px;
+    }
+    .subcat-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .subcat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .subcat-chip:hover {
+        background: #4f46e5;
+        color: #fff;
+        border-color: #4f46e5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79,70,229,0.25);
+    }
+    .subcat-chip .chip-arrow {
+        font-size: 11px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .subcat-chip:hover .chip-arrow { opacity: 1; }
+
+    /* Color themes per category */
+    .cat-food .cat-icon-wrap   { background: #fef3c7; }
+    .cat-elec .cat-icon-wrap   { background: #dbeafe; }
+    .cat-serv .cat-icon-wrap   { background: #d1fae5; }
+    .cat-retail .cat-icon-wrap { background: #fce7f3; }
+    .cat-fash .cat-icon-wrap   { background: #ede9fe; }
+    .cat-beauty .cat-icon-wrap { background: #fce7f3; }
+    .cat-auto .cat-icon-wrap   { background: #e0e7ff; }
+    .cat-homesvc .cat-icon-wrap { background: #ccfbf1; }
+    .cat-agri .cat-icon-wrap   { background: #dcfce7; }
+    .cat-pharma .cat-icon-wrap { background: #fce7f3; }
+
+    .cat-food:hover    { border-color: #fbbf24; }
+    .cat-elec:hover    { border-color: #3b82f6; }
+    .cat-serv:hover    { border-color: #10b981; }
+    .cat-retail:hover  { border-color: #ec4899; }
+    .cat-fash:hover    { border-color: #8b5cf6; }
+    .cat-beauty:hover  { border-color: #f472b6; }
+    .cat-auto:hover    { border-color: #6366f1; }
+    .cat-homesvc:hover { border-color: #14b8a6; }
+    .cat-agri:hover    { border-color: #22c55e; }
+    .cat-pharma:hover  { border-color: #f43f5e; }
+
+    /* Browse all button */
+    .browse-all-wrap {
+        text-align: center;
+        padding: 0 24px 60px;
+    }
+    .browse-all-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 36px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+    }
+    .browse-all-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79,70,229,0.4);
+    }
+
+    @media (max-width: 640px) {
+        .cat-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<!-- Hero Header -->
+<div class="cat-page-header">
+    <div class="badge"><span></span> Browse by Category</div>
+    <h1>Explore <em>Categories</em></h1>
+    <p>Browse through our curated categories to find local businesses that match exactly what you're looking for.</p>
+</div>
+
+<!-- Category Cards Grid -->
+<div class="cat-grid">
+
+    <!-- Food & Home-Made Products -->
+    <div class="cat-card cat-food" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🍽️</div>
+            <div>
+                <h3>Food & Home-Made Products</h3>
+                <small>3 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Food+%26+Home-Made+Products&subcategory=Cakes+and+Bakery">🎂 Cakes & Bakery <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Food+%26+Home-Made+Products&subcategory=Tiffin+/+Mess">🍱 Tiffin / Mess <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Food+%26+Home-Made+Products&subcategory=Snacks+/+Papad+/+Pickles">🥜 Snacks / Papad / Pickles <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Electronics -->
+    <div class="cat-card cat-elec" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">💻</div>
+            <div>
+                <h3>Electronics</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Electronics&subcategory=Mobile+Repair">📱 Mobile Repair <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Electronics&subcategory=Laptop+Repair">💻 Laptop Repair <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div class="cat-card cat-serv" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🔧</div>
+            <div>
+                <h3>Services</h3>
+                <small>3 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Services&subcategory=Electrician">⚡ Electrician <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Services&subcategory=Plumber">🔧 Plumber <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Services&subcategory=Tutor">📚 Tutor <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Retail -->
+    <div class="cat-card cat-retail" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🛍️</div>
+            <div>
+                <h3>Retail</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Retail&subcategory=Grocery">🛒 Grocery <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Retail&subcategory=Stationery">📎 Stationery <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fashion -->
+    <div class="cat-card cat-fash" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">👗</div>
+            <div>
+                <h3>Fashion</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Fashion&subcategory=Tailors">✂️ Tailors <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Fashion&subcategory=Boutique">👗 Boutique <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beauty -->
+    <div class="cat-card cat-beauty" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">✨</div>
+            <div>
+                <h3>Beauty</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Beauty&subcategory=Male+Salon">💈 Male Salon <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Beauty&subcategory=Female+Parlour">💅 Female Parlour <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automobile -->
+    <div class="cat-card cat-auto" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🚗</div>
+            <div>
+                <h3>Automobile</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Automobile&subcategory=Bike+Repair">🏍️ Bike Repair <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Automobile&subcategory=Car+Repair">🚗 Car Repair <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Services -->
+    <div class="cat-card cat-homesvc" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🏠</div>
+            <div>
+                <h3>Home Services</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Home+Services&subcategory=Carpenter">🪚 Carpenter <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Home+Services&subcategory=Painter">🎨 Painter <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agriculture -->
+    <div class="cat-card cat-agri" onclick="toggleCard(this)">
+        <div class="cat-card-top">
+            <div class="cat-icon-wrap">🚜</div>
+            <div>
+                <h3>Agriculture</h3>
+                <small>2 subcategories</small>
+            </div>
+        </div>
+        <div class="cat-arrow">▼</div>
+        <div class="subcat-drawer">
+            <p class="drawer-label">Subcategories</p>
+            <div class="subcat-list">
+                <a class="subcat-chip" href="/search?category=Agriculture&subcategory=Dairy">🥛 Dairy <span class="chip-arrow">→</span></a>
+                <a class="subcat-chip" href="/search?category=Agriculture&subcategory=Vegetables">🥬 Vegetables <span class="chip-arrow">→</span></a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Browse All CTA -->
+<div class="browse-all-wrap">
+    <a href="/search" class="browse-all-btn">
+        🔍 Browse All Businesses <span>→</span>
+    </a>
+</div>
+
+<script>
+    function toggleCard(card) {
+        // Don't toggle if user clicked a subcategory link
+        if (event.target.closest('.subcat-chip')) return;
+
+        // Close other open cards
+        document.querySelectorAll('.cat-card.open').forEach(c => {
+            if (c !== card) c.classList.remove('open');
+        });
+
+        card.classList.toggle('open');
+    }
+</script>
+{% endblock %}
