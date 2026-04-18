@@ -33,17 +33,17 @@
             {% endif %}
             
             <nav class="w-full space-y-1 mt-auto">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-semibold transition-colors">
+                <a href="/owner_dashboard" class="flex items-center gap-3 px-4 py-3 bg-primary-50 text-primary-700 rounded-xl font-semibold transition-colors">
                     <span class="text-lg w-6">📊</span> Overview
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                <a href="/my_businesses" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
                     <span class="text-lg w-6">🏢</span> My Businesses
+                </a>
+                <a href="/manage_products" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
+                    <span class="text-lg w-6">📦</span> Products
                 </a>
                 <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
                     <span class="text-lg w-6">💰</span> Earnings
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
-                    <span class="text-lg w-6">📅</span> Appointments
                 </a>
                 <a href="#" class="flex items-center gap-3 px-4 py-3 text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900 rounded-xl font-medium transition-colors">
                     <span class="text-lg w-6">⭐</span> Reviews
@@ -63,34 +63,57 @@
             <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
             <div class="relative z-10">
                 <h1 class="text-3xl md:text-4xl font-bold mb-3">Welcome back, {{ username }}! 📈</h1>
-                <p class="text-primary-100 text-lg max-w-2xl">Here's a bird's-eye view of how your businesses have been performing today.</p>
+                <p class="text-primary-100 text-lg max-w-2xl">Here's a bird's-eye view of how your businesses have been performing.</p>
             </div>
         </header>
 
-        <!-- Stats grid -->
+        <!-- Stats grid — DYNAMIC DATA -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Earnings -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
                 <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">💰</div>
                 <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Total Earnings</h3>
-                <p class="text-3xl font-extrabold text-secondary-900">$4,520</p>
+                <p class="text-3xl font-extrabold text-secondary-900">₹{{ "%.2f"|format(total_earnings) }}</p>
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
             </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+
+            <!-- Active Businesses — CLICKABLE -->
+            <a href="/my_businesses" class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-all relative overflow-hidden group cursor-pointer hover:border-purple-200 block">
                 <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">🏢</div>
                 <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Active Businesses</h3>
                 <p class="text-3xl font-extrabold text-secondary-900">{{ active_businesses|default(0) }}</p>
+                <span class="text-xs text-purple-500 font-medium mt-1 inline-block">Click to view all →</span>
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-            </div>
+            </a>
+
+            <!-- Average Rating -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">👁️</div>
-                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Profile Views</h3>
-                <p class="text-3xl font-extrabold text-secondary-900">342<span class="text-sm text-green-500 ml-2 font-medium">↑ 12%</span></p>
-                <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">⭐</div>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Avg Rating</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">
+                    {{ avg_rating }}
+                    <span class="text-sm text-yellow-500 ml-1 font-medium">/ 5</span>
+                </p>
+                <!-- Star visualization -->
+                <div class="flex gap-0.5 mt-2">
+                    {% for i in range(1, 6) %}
+                        {% if avg_rating >= i %}
+                            <span class="text-yellow-400 text-sm">★</span>
+                        {% elif avg_rating >= i - 0.5 %}
+                            <span class="text-yellow-300 text-sm">★</span>
+                        {% else %}
+                            <span class="text-gray-200 text-sm">★</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
             </div>
+
+            <!-- Total Bookings -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-secondary-100 hover:shadow-md transition-shadow relative overflow-hidden group">
                 <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">📅</div>
-                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">New Bookings</h3>
-                <p class="text-3xl font-extrabold text-secondary-900">18</p>
+                <h3 class="text-sm font-bold text-secondary-400 uppercase tracking-wider mb-1">Total Bookings</h3>
+                <p class="text-3xl font-extrabold text-secondary-900">{{ total_bookings|default(0) }}</p>
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
             </div>
         </section>
@@ -100,34 +123,42 @@
             <section class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-secondary-100 p-8">
                 <div class="flex justify-between items-center mb-6 border-b border-secondary-100 pb-4">
                     <h2 class="text-xl font-bold text-secondary-900">Recent Activity</h2>
-                    <a href="#" class="text-primary-600 font-medium hover:text-primary-700 text-sm">View Full Log</a>
                 </div>
                 
                 <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl flex-shrink-0 mt-1">💵</div>
-                        <div>
-                            <p class="text-secondary-900 font-bold mb-1">Payment Received</p>
-                            <p class="text-secondary-600 text-sm">$120 from John Doe for Plumbing Service</p>
-                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">2 HOURS AGO</p>
+                    {% if recent_bookings %}
+                        {% for booking in recent_bookings %}
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl flex-shrink-0 mt-1">💵</div>
+                            <div>
+                                <p class="text-secondary-900 font-bold mb-1">Booking Received</p>
+                                <p class="text-secondary-600 text-sm">₹{{ booking[3] }} from {{ booking[0] }} for {{ booking[2] }} ({{ booking[1] }})</p>
+                                <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">{{ booking[4]|upper }} • {{ booking[5] }}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl flex-shrink-0 mt-1">📅</div>
-                        <div>
-                            <p class="text-secondary-900 font-bold mb-1">New Appointment Booked</p>
-                            <p class="text-secondary-600 text-sm">Sarah Smith booked 'Tech Fixers' for tomorrow</p>
-                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">5 HOURS AGO</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if recent_ratings %}
+                        {% for rating in recent_ratings %}
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl flex-shrink-0 mt-1">⭐</div>
+                            <div>
+                                <p class="text-secondary-900 font-bold mb-1">New {{ rating[2] }}-Star Review</p>
+                                <p class="text-secondary-600 text-sm italic">"{{ rating[3][:100] if rating[3] else 'No comment' }}" — {{ rating[0] }}</p>
+                                <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">{{ rating[1] }} • {{ rating[4] }}</p>
+                            </div>
                         </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not recent_bookings and not recent_ratings %}
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-3">📭</div>
+                        <p class="text-secondary-400 font-medium">No activity yet</p>
+                        <p class="text-secondary-300 text-sm mt-1">Bookings and reviews will appear here</p>
                     </div>
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl flex-shrink-0 mt-1">⭐</div>
-                        <div>
-                            <p class="text-secondary-900 font-bold mb-1">New 5-Star Review</p>
-                            <p class="text-secondary-600 text-sm italic">"Great service, highly recommend!" - Mike</p>
-                            <p class="text-secondary-400 text-xs mt-1 font-medium tracking-wide">1 DAY AGO</p>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
             </section>
 
@@ -142,11 +173,11 @@
                             <p class="text-secondary-500 text-xs">Register new service</p>
                         </div>
                     </a>
-                    <a href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-pink-50 hover:border-pink-200 transition-all">
-                        <div class="w-10 h-10 rounded-full bg-white text-pink-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">📢</div>
+                    <a href="/my_businesses" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-purple-50 hover:border-purple-200 transition-all">
+                        <div class="w-10 h-10 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">🏢</div>
                         <div>
-                            <h3 class="font-bold text-secondary-900 group-hover:text-pink-700">Create Promotion</h3>
-                            <p class="text-secondary-500 text-xs">Offer discounts</p>
+                            <h3 class="font-bold text-secondary-900 group-hover:text-purple-700">View All Businesses</h3>
+                            <p class="text-secondary-500 text-xs">See all registered businesses</p>
                         </div>
                     </a>
                     <a href="/manage_products" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-green-50 hover:border-green-200 transition-all">
@@ -156,11 +187,11 @@
                             <p class="text-secondary-500 text-xs">Add & manage inventory</p>
                         </div>
                     </a>
-                    <a href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-blue-50 hover:border-blue-200 transition-all">
-                        <div class="w-10 h-10 rounded-full bg-white text-blue-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">✉️</div>
+                    <a href="#" class="group flex items-center gap-4 p-4 rounded-2xl border border-secondary-100 bg-secondary-50 hover:bg-pink-50 hover:border-pink-200 transition-all">
+                        <div class="w-10 h-10 rounded-full bg-white text-pink-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">📢</div>
                         <div>
-                            <h3 class="font-bold text-secondary-900 group-hover:text-blue-700">Message Clients</h3>
-                            <p class="text-secondary-500 text-xs">Send updates</p>
+                            <h3 class="font-bold text-secondary-900 group-hover:text-pink-700">Create Promotion</h3>
+                            <p class="text-secondary-500 text-xs">Offer discounts</p>
                         </div>
                     </a>
                 </div>

@@ -72,90 +72,218 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+
 <style>
-        .fav-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-            z-index: 10;
+    .fav-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+        z-index: 10;
+    }
+
+    .fav-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .record-image {
+        position: relative;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .status-open {
+        background-color: #2ecc71;
+    }
+
+    .status-closed {
+        background-color: #e74c3c;
+    }
+
+    .time-info {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+</style>
+
+<style>
+    /* Near Me pill special style */
+    .pill-nearme {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .pill-nearme:hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+        transform: translateY(-1px);
+    }
+
+    .pill-nearme.active {
+        background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.5) !important;
+    }
+
+    /* Location finding spinner */
+    #location-status {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 12px;
+        margin-top: 14px;
+        font-size: 14px;
+        color: #5a4b8a;
+        font-weight: 500;
+    }
+
+    .pulse-dot {
+        width: 10px;
+        height: 10px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: pulse-anim 1.4s infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes pulse-anim {
+        0% {
+            transform: scale(1);
+            opacity: 1;
         }
-        .fav-btn:hover {
-            transform: scale(1.1);
+
+        50% {
+            transform: scale(1.5);
+            opacity: 0.5;
         }
-        .record-image {
-            position: relative;
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
         }
-        .status-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .status-open {
-            background-color: #2ecc71;
-        }
-        .status-closed {
-            background-color: #e74c3c;
-        }
-        .time-info {
-            font-size: 13px;
-            color: #7f8c8d;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-    </style>
-   
+    }
+
+    .km-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-top: 4px;
+    }
+
+    .nearby-range-selector {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        margin-top: 14px;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 14px;
+        backdrop-filter: blur(6px);
+    }
+
+    .nearby-range-selector label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #4a3b78;
+        white-space: nowrap;
+    }
+
+    .range-btn {
+        padding: 7px 18px;
+        border-radius: 20px;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .range-btn:hover,
+    .range-btn.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+</style>
+
 <section class="search-section-new" style="margin: 30px auto; padding: 0 43px;">
     <div style="margin-bottom: 16px;">
-        <h2 style="font-family: 'Poppins', sans-serif; font-size: 24px; color: #2c3e50; margin: 0;">Find Local Businesses 🔍</h2>
+        <h2 style="font-family: 'Poppins', sans-serif; font-size: 24px; color: #2c3e50; margin: 0;">Find Local
+            Businesses 🔍</h2>
         <p style="color: #666; font-size: 14px; margin-top: 5px;">Search by name and filter by location or category</p>
     </div>
 
-    <!-- The actual search form modeled after demo.html -->
     <form action="/search" method="GET" class="nearby-search-bar" id="search-form">
         <div class="search-input-wrap">
             <span class="search-icon">🔍</span>
             <input class="search-input" type="text" name="query" placeholder="Search business name...">
         </div>
-        
+
         <select class="filter-select" name="location">
             <option value="">All Locations</option>
             <option value="Pune">Pune</option>
             <option value="Mumbai">Mumbai</option>
         </select>
-        
-        <!-- Hidden input to store chosen category from pills -->
+
+        <!-- Hidden inputs for geo + filters -->
+        <input type="hidden" name="user_lat" id="user_lat" value="">
+        <input type="hidden" name="user_lng" id="user_lng" value="">
         <input type="hidden" name="category" id="category-input" value="">
-        
+
         <button class="btn-locate" type="submit">Search</button>
     </form>
 
-    <div class="category-pills" id="cat-pills">
+    <!-- Category Pills -->
+    <div class="category-pills" id="cat-pills" style="margin-top: 16px;">
         <div class="pill active" onclick="selectCategory(this, '')">All Categories</div>
-        <div class="pill" onclick="selectCategory(this, 'Food & Home-Made Products')">🍽️ Food & Home-Made Products</div>
+        <div class="pill pill-nearme" id="nearme-pill" onclick="activateNearMe(this)">📍 Businesses Near Me</div>
+        <div class="pill" onclick="selectCategory(this, 'Food & Home-Made Products')">🍽️ Food &amp; Home-Made Products
+        </div>
         <div class="pill" onclick="selectCategory(this, 'Electronics')">💻 Electronics</div>
         <div class="pill" onclick="selectCategory(this, 'Services')">🔧 Services</div>
         <div class="pill" onclick="selectCategory(this, 'Retail')">🛍️ Retail</div>
@@ -166,173 +294,259 @@
         <div class="pill" onclick="selectCategory(this, 'Agriculture')">🚜 Agriculture</div>
     </div>
 
-    <div id="subcategory-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
-        <p style="font-size: 13px; font-weight: 600; color: #666; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Select Subcategory</p>
-        <div class="category-pills" id="sub-pills">
-            <!-- Dynamic pills go here -->
-        </div>
+    <!-- Nearby range picker (shown when Near Me is active) -->
+    <div class="nearby-range-selector" id="nearby-range-selector">
+        <label>📏 Show businesses within:</label>
+        <button type="button" class="range-btn active" data-km="0.8" onclick="setNearbyRange(this, 0.8)">800 m</button>
+        <button type="button" class="range-btn" data-km="1" onclick="setNearbyRange(this, 1)">1 km</button>
     </div>
+
+    <!-- Location detecting status -->
+    <div id="location-status">
+        <div class="pulse-dot"></div>
+        <span id="location-status-text">Detecting your location...</span>
+    </div>
+
+    <div id="subcategory-container"
+        style="display: none; margin-top: 15px; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
+        <p
+            style="font-size: 13px; font-weight: 600; color: #666; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Select Subcategory</p>
+        <div class="category-pills" id="sub-pills"></div>
+    </div>
+
 </section>
 
 <!-- Subcategory Input -->
 <input type="hidden" name="subcategory" id="subcategory-input" value="">
 
 <script>
-const subcategoryMapping = {
-    'Food & Home-Made Products': ['Cakes and Bakery', 'Tiffin / Mess', 'Snacks / Papad / Pickles'],
-    'Services': ['Electrician', 'Plumber', 'Tutor'],
-    'Retail': ['Grocery', 'Stationery'],
-    'Electronics': ['Mobile Repair', 'Laptop Repair'],
-    'Fashion': ['Tailors', 'Boutique'],
-    'Beauty': ['Male Salon', 'Female Parlour'],
-    'Automobile': ['Bike Repair', 'Car Repair'],
-    'Home Services': ['Carpenter', 'Painter'],
-    'Agriculture': ['Dairy', 'Vegetables']
-};
+    const subcategoryMapping = {
+        'Food & Home-Made Products': ['Cakes and Bakery', 'Tiffin / Mess', 'Snacks / Papad / Pickles','Catering','Juice Shop'],
+        'Services': ['Electrician', 'Plumber', 'Tutor'],
+        'Retail': ['Grocery', 'Stationery'],
+        'Electronics': ['Mobile Repair', 'Laptop Repair'],
+        'Fashion': ['Tailors', 'Boutique'],
+        'Beauty': ['Male Salon', 'Female Parlour'],
+        'Automobile': ['Bike Repair', 'Car Repair'],
+        'Home Services': ['Carpenter', 'Painter'],
+        'Agriculture': ['Dairy', 'Vegetables']
+    };
 
-let selectedCategory = '';
+    let selectedCategory = '';
+    let nearMeActive = false;
+    let nearbyRadiusKm = 0.5; // default 500 m (stored as km)
+    let userLat = NaN;
+    let userLng = NaN;
 
-function selectCategory(el, cat) {
-    // 1. Highlight selected category
-    document.querySelectorAll('#cat-pills .pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    
-    // 2. Store selected category
-    selectedCategory = cat;
-    document.getElementById('category-input').value = cat;
-    
-    // 3. Clear subcategory input
-    document.getElementById('subcategory-input').value = '';
-    
-    // 4. Update subcategory pills
-    const subContainer = document.getElementById('subcategory-container');
-    const subPills = document.getElementById('sub-pills');
-    
-    if (cat && subcategoryMapping[cat]) {
-        subContainer.style.display = 'block';
-        let html = `<div class="pill active" onclick="selectSubcategory(this, 'All')">All</div>`;
-        subcategoryMapping[cat].forEach(sub => {
-            html += `<div class="pill" onclick="selectSubcategory(this, '${sub}')">${sub}</div>`;
+    document.addEventListener('DOMContentLoaded', () => {
+        // Attach listener to form submission
+        document.getElementById('search-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            fetchResults();
         });
-        subPills.innerHTML = html;
-        
-        // Ensure subcategory input is 'All' when category changes
-        document.getElementById('subcategory-input').value = 'All';
-    } else {
-        subContainer.style.display = 'none';
-        subPills.innerHTML = '';
-        document.getElementById('subcategory-input').value = '';
-    }
-    
-    // Always fetch results immediately when category changes
-    fetchResults();
-}
 
-function selectSubcategory(el, subcat) {
-    // Highlight subcategory
-    document.querySelectorAll('#sub-pills .pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    
-    // Set input
-    document.getElementById('subcategory-input').value = subcat;
-    
-    // Trigger backend fetch
-    fetchResults();
-}
+        document.querySelector('select[name="location"]').addEventListener('change', () => {
+            fetchResults();
+        });
 
-async function fetchResults() {
-    const query = document.querySelector('input[name="query"]').value;
-    const location = document.querySelector('select[name="location"]').value;
-    const cat = document.getElementById('category-input').value;
-    const subcat = document.getElementById('subcategory-input').value;
-    
-    const params = new URLSearchParams({
-        query: query,
-        location: location,
-        category: cat,
-        subcategory: subcat,
-        ajax: '1'
+        // Initialize with results on screen
+        fetchResults();
     });
-    
-    try {
-        const response = await fetch(`/search?${params.toString()}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        const data = await response.json();
-        updateResultsGrid(data);
-    } catch (error) {
-        console.error('Error fetching results:', error);
-    }
-}
 
-function updateResultsGrid(data) {
-    const container = document.querySelector('.records-grid');
-    if (!container) {
-        // If results weren't there (Not Found div shown), we need to create the grid or replace the Not Found div
-        const mainContent = document.querySelector('section.search-section-new').nextElementSibling;
-        // This is tricky. Let's ensure there's always a container we can target.
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
-    
-    const results = data.results;
-    const favs = data.user_favorites;
-    
-    if (results.length === 0) {
-        document.body.innerHTML = document.body.innerHTML.replace(/<div class="records-grid">[\s\S]*?<\/div>/, '<div class="not-found"><h2>No businesses found 🤷</h2></div>');
-        // Better:
-        const existingGrid = document.querySelector('.records-grid');
-        const existingNotFound = document.querySelector('.not-found');
-        if (existingGrid) existingGrid.style.display = 'none';
-        if (existingNotFound) {
-            existingNotFound.style.display = 'block';
-        } else {
-            const div = document.createElement('div');
-            div.className = 'not-found';
-            div.innerHTML = '<h2>No businesses found 🤷</h2>';
-            if (existingGrid) existingGrid.parentNode.insertBefore(div, existingGrid.nextSibling);
+
+    function activateNearMe(el) {
+        nearMeActive = true;
+        document.querySelectorAll('#cat-pills .pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        selectedCategory = '';
+        document.getElementById('category-input').value = '';
+        document.getElementById('subcategory-input').value = '';
+        document.getElementById('subcategory-container').style.display = 'none';
+        document.getElementById('nearby-range-selector').style.display = 'flex';
+
+        // Show locating status
+        const statusEl = document.getElementById('location-status');
+        const statusTxt = document.getElementById('location-status-text');
+        statusEl.style.display = 'flex';
+        statusTxt.textContent = 'Detecting your location...';
+
+        if (!('geolocation' in navigator)) {
+            statusTxt.textContent = '❌ Geolocation is not supported by your browser.';
+            return;
         }
-        return;
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                userLat = position.coords.latitude;
+                userLng = position.coords.longitude;
+                document.getElementById('user_lat').value = userLat;
+                document.getElementById('user_lng').value = userLng;
+                statusTxt.textContent = `✅ Location found! Showing businesses within ${nearbyRadiusKm < 1 ? nearbyRadiusKm * 1000 + ' m' : nearbyRadiusKm + ' km'}.`;
+                fetchResults();
+            },
+            (err) => {
+                statusTxt.textContent = '❌ Could not detect location. Please allow location access.';
+                console.error('Geolocation error:', err);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
     }
 
-    // If we have results, show the grid and hide not-found
-    let grid = document.querySelector('.records-grid');
-    const nf = document.querySelector('.not-found');
-    if (nf) nf.style.display = 'none';
-    if (!grid) {
-        grid = document.createElement('div');
-        grid.className = 'records-grid';
-        if (nf) nf.parentNode.insertBefore(grid, nf);
+    function setNearbyRange(btn, km) {
+        nearbyRadiusKm = km;
+        document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const statusTxt = document.getElementById('location-status-text');
+        if (!isNaN(userLat)) {
+            statusTxt.textContent = `✅ Showing businesses within ${km < 1 ? km * 1000 + ' m' : km + ' km'} of your location.`;
+            fetchResults();
+        }
     }
-    grid.style.display = 'grid';
-    
-    let html = '';
-    results.forEach(business => {
-        // Indices map to the list returned by app.py:
-        // 0:id, 1:name, 2:description, 3:location, 4:category, 5:subcategory, 6:images, 10:is_open, 11:start_str, 12:close_str
-        const isFav = favs.includes(business[1]);
-        const statusBadge = (business[11] && business[12]) ? `
-            ${business[10] ? `
-                <div class="status-badge status-open">
-                    <span class="icon"></span> Open Now
-                </div>
-            ` : `
-                <div class="status-badge status-closed">
-                    <span class="icon"></span> Closed
-                </div>
-            `}
-        ` : '';
 
-        const timeInfo = (business[11] && business[12]) ? `
-            <p class="time-info">
-                🕒 ${business[11]} - ${business[12]}
-            </p>
-        ` : '';
+    function selectCategory(el, cat) {
+        nearMeActive = false;
+        document.getElementById('nearby-range-selector').style.display = 'none';
+        document.getElementById('location-status').style.display = 'none';
 
-        html += `
+        document.querySelectorAll('#cat-pills .pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+
+        selectedCategory = cat;
+        document.getElementById('category-input').value = cat;
+        document.getElementById('subcategory-input').value = '';
+
+        const subContainer = document.getElementById('subcategory-container');
+        const subPills = document.getElementById('sub-pills');
+
+        if (cat && subcategoryMapping[cat]) {
+            subContainer.style.display = 'block';
+            let html = `<div class="pill active" onclick="selectSubcategory(this, 'All')">All</div>`;
+            subcategoryMapping[cat].forEach(sub => {
+                html += `<div class="pill" onclick="selectSubcategory(this, '${sub}')">${sub}</div>`;
+            });
+            subPills.innerHTML = html;
+            document.getElementById('subcategory-input').value = 'All';
+        } else {
+            subContainer.style.display = 'none';
+            subPills.innerHTML = '';
+        }
+
+        fetchResults();
+    }
+
+    function selectSubcategory(el, subcat) {
+        document.querySelectorAll('#sub-pills .pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('subcategory-input').value = subcat;
+        fetchResults();
+    }
+
+    async function fetchResults() {
+        const query = document.querySelector('input[name="query"]').value;
+        const location = nearMeActive ? '' : document.querySelector('select[name="location"]').value;
+        const cat = document.getElementById('category-input').value;
+        const subcat = document.getElementById('subcategory-input').value;
+
+        const params = new URLSearchParams({
+            query: query,
+            location: location,
+            category: cat,
+            subcategory: subcat,
+            ajax: '1'
+        });
+
+        try {
+            const response = await fetch(`/search?${params.toString()}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await response.json();
+            updateResultsGrid(data);
+        } catch (error) {
+            console.error('Error fetching results:', error);
+        }
+    }
+
+    function updateResultsGrid(data) {
+        let filteredResults = data.results;
+        const favs = data.user_favorites;
+
+        // Near Me filtering (client-side distance filter)
+        if (nearMeActive && !isNaN(userLat) && !isNaN(userLng)) {
+            filteredResults = filteredResults.filter(b => {
+                if (b[10] && b[11]) {
+                    const dist = calculateDistance(userLat, userLng, parseFloat(b[10]), parseFloat(b[11]));
+                    b.distance = dist;
+                    return dist <= nearbyRadiusKm;
+                }
+                return false;
+            });
+            filteredResults.sort((a, b) => a.distance - b.distance);
+        }
+
+        // Resolve grid container
+        let grid = document.querySelector('.records-grid');
+        const nf = document.querySelector('.not-found');
+
+        if (filteredResults.length === 0) {
+            if (grid) grid.style.display = 'none';
+            if (nf) {
+                nf.style.display = 'block';
+                nf.querySelector('h2').textContent = nearMeActive
+                    ? `No businesses found within ${nearbyRadiusKm < 1 ? nearbyRadiusKm * 1000 + ' m' : nearbyRadiusKm + ' km'} 📍`
+                    : 'No businesses found 🤷';
+            } else {
+                const div = document.createElement('div');
+                div.className = 'not-found';
+                div.innerHTML = `<h2>${nearMeActive ? `No businesses found within ${nearbyRadiusKm < 1 ? nearbyRadiusKm * 1000 + ' m' : nearbyRadiusKm + ' km'} 📍` : 'No businesses found 🤷'}</h2>`;
+                document.querySelector('section.search-section-new + *').replaceWith(div);
+            }
+            return;
+        }
+
+        if (nf) nf.style.display = 'none';
+        if (!grid) {
+            grid = document.createElement('div');
+            grid.className = 'records-grid';
+            if (nf) nf.parentNode.insertBefore(grid, nf);
+            else document.querySelector('.search-section-new').insertAdjacentElement('afterend', grid);
+        }
+        grid.style.display = 'grid';
+
+        let html = '';
+        filteredResults.forEach(business => {
+            const isFav = favs.includes(business[1]);
+            const statusBadge = (business[13] && business[14]) ? (
+                business[12]
+                    ? `<div class="status-badge status-open"><span class="icon"></span> Open Now</div>`
+                    : `<div class="status-badge status-closed"><span class="icon"></span> Closed</div>`
+            ) : '';
+
+            const timeInfo = (business[13] && business[14])
+                ? `<p class="time-info">🕒 ${business[13]} - ${business[14]}</p>`
+                : '';
+
+            const distInfo = (business.distance !== undefined)
+                ? `<span class="km-badge">🚗 ${business.distance.toFixed(1)} km away</span>`
+                : '';
+
+            html += `
             <div class="record-card">
                 <div class="record-image">
                     <img src="/static/uploads/${business[6]}" alt="${business[1]}">
                     ${statusBadge}
-                    <button class="fav-btn ${isFav ? 'favorited' : ''}" 
+                    <button class="fav-btn ${isFav ? 'favorited' : ''}"
                             data-name="${business[1]}"
                             data-location="${business[3]}"
                             data-details="${business[2].substring(0, 499)}"
@@ -344,6 +558,7 @@ function updateResultsGrid(data) {
                     <h1 class="business-name">${business[1]}</h1>
                     <p class="business-category">${business[4]}${business[5] ? ' / ' + business[5] : ''}</p>
                     <p class="business-location">📍 ${business[3]}</p>
+                    ${distInfo}
                     ${timeInfo}
                     <div class="business-description">
                         <h2>About Us</h2>
@@ -351,73 +566,24 @@ function updateResultsGrid(data) {
                     </div>
                     <div class="business-actions">
                         <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
-                        <a href="/shop/${business[1]}/products" class="btn btn-secondary">📦 Book Product</a>
+                        <a href="/shop/${encodeURIComponent(business[1])}/products" class="btn btn-secondary">📦 Book Product</a>
                     </div>
                 </div>
             </div>
         `;
-    });
-    grid.innerHTML = html;
-}
+        });
+        grid.innerHTML = html;
+    }
 </script>
 
 {% if results %}
-    <div class="records-grid">
-    {% for business in results %}
-        <div class="record-card">
-            <div class="record-image">
-                <img src="{{ url_for('static', filename='uploads/' + business[6]) }}" alt="{{ business[1] }}">
-                
-                {% if business[11] and business[12] %}
-                    {% if business[10] %}
-                        <div class="status-badge status-open">
-                            <span class="icon"></span> Open Now
-                        </div>
-                    {% else %}
-                        <div class="status-badge status-closed">
-                            <span class="icon"></span> Closed
-                        </div>
-                    {% endif %}
-                {% endif %}
-
-                <button class="fav-btn {% if business[1] in user_favorites %}favorited{% endif %}" 
-                        data-name="{{ business[1] }}"
-                        data-location="{{ business[3] }}"
-                        data-details="{{ business[2][:499] }}"
-                        onclick="toggleFav(this)">
-                    {% if business[1] in user_favorites %}❤️{% else %}🤍{% endif %}
-                </button>
-            </div>
-            <div class="record-content">
-                <h1 class="business-name">{{ business[1] }}</h1>
-                <p class="business-category">{{ business[4] }}{% if business[5] %} / {{ business[5] }}{% endif %}</p>
-                <p class="business-location">📍 {{ business[3] }}</p>
-                
-                {% if business[11] and business[12] %}
-                <p class="time-info">
-                    🕒 {{ business[11] }} - {{ business[12] }}
-                </p>
-                {% endif %}
-                
-                <div class="business-description">
-                    <h2>About Us</h2>
-                    <p>{{ business[2][:100] }}{% if business[2]|length > 100 %}...{% endif %}</p>
-                </div>
-                
-                <div class="business-actions">
-                    <a href="mailto:contact@example.com" class="btn btn-primary">Contact</a>
-                    <a href="/shop/{{ business[1] }}/products" class="btn btn-secondary">📦 Book Product</a>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-{% else %}
+<div class="records-grid" style="display: none;"> <!-- We let JS handle rendering grid by default -->
+    {% else %}
     <div class="not-found">
         <h2>No businesses found 🤷</h2>
     </div>
-{% endif %}
- 
+    {% endif %}
+
 
     <footer class="footer">
         <div class="footer-container">
@@ -444,50 +610,50 @@ function updateResultsGrid(data) {
     </footer>
 
     <script>
-    async function toggleFav(btn) {
-        const name = btn.getAttribute('data-name');
-        const location = btn.getAttribute('data-location');
-        const details = btn.getAttribute('data-details');
-        
-        const isFav = btn.classList.contains('favorited');
-        btn.classList.toggle('favorited');
-        btn.innerText = isFav ? '🤍' : '❤️';
-        
-        try {
-            const res = await fetch('/toggle_favorite', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    shop_name: name,
-                    shop_location: location,
-                    shop_details: details
-                })
-            });
-            
-            if (res.status === 401) {
-                // Not logged in, redirect
-                btn.classList.toggle('favorited');
-                btn.innerText = isFav ? '❤️' : '🤍';
-                window.location.href = '/login';
-                return;
-            }
-            
-            const data = await res.json();
-            if(!data.success) {
-                btn.classList.toggle('favorited');
-                btn.innerText = isFav ? '❤️' : '🤍';
-                console.error("Error toggling favorite");
-            }
-        } catch(err) {
-            console.error(err);
-            btn.classList.toggle('favorited');
-            btn.innerText = isFav ? '❤️' : '🤍';
-        }
-    }
-    </script>
-</body>
+        async function toggleFav(btn) {
+            const name = btn.getAttribute('data-name');
+            const location = btn.getAttribute('data-location');
+            const details = btn.getAttribute('data-details');
 
-</html>
-{% endblock %}
+            const isFav = btn.classList.contains('favorited');
+            btn.classList.toggle('favorited');
+            btn.innerText = isFav ? '🤍' : '❤️';
+
+            try {
+                const res = await fetch('/toggle_favorite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        shop_name: name,
+                        shop_location: location,
+                        shop_details: details
+                    })
+                });
+
+                if (res.status === 401) {
+                    // Not logged in, redirect
+                    btn.classList.toggle('favorited');
+                    btn.innerText = isFav ? '❤️' : '🤍';
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const data = await res.json();
+                if (!data.success) {
+                    btn.classList.toggle('favorited');
+                    btn.innerText = isFav ? '❤️' : '🤍';
+                    console.error("Error toggling favorite");
+                }
+            } catch (err) {
+                console.error(err);
+                btn.classList.toggle('favorited');
+                btn.innerText = isFav ? '❤️' : '🤍';
+            }
+        }
+    </script>
+    </body>
+
+    </html>
+    {% endblock %}

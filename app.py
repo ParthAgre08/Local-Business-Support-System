@@ -3,6 +3,9 @@ from httpcore import __name
 from flask_mysqldb import MySQL
 import os 
 from werkzeug.utils import secure_filename 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #craeting the obj of flask class and save into app or we also say creating the flask app 
 app = Flask(__name__)
@@ -91,11 +94,54 @@ def owner_dashboard():
         
     email = session['email']
     cur = mysql.connection.cursor()
+    
+    # Active businesses count
     cur.execute("SELECT COUNT(*) FROM business_record WHERE email = %s", (email,))
     active_businesses_count = cur.fetchone()[0]
+    
+    # Total earnings from owner_earnings table
+    cur.execute("SELECT total_earnings FROM owner_earnings WHERE owner_email = %s", (email,))
+    earnings_row = cur.fetchone()
+    total_earnings = float(earnings_row[0]) if earnings_row else 0.00
+    
+    # Average rating across all owner's businesses
+    cur.execute("""
+        SELECT AVG(r.rating) FROM ratings r
+        INNER JOIN business_record b ON r.shop_name = b.name
+        WHERE b.email = %s
+    """, (email,))
+    avg_row = cur.fetchone()
+    avg_rating = round(float(avg_row[0]), 1) if avg_row and avg_row[0] else 0.0
+    
+    # Total bookings count
+    cur.execute("SELECT COUNT(*) FROM bookings WHERE owner_email = %s", (email,))
+    total_bookings = cur.fetchone()[0]
+    
+    # Recent activity (last 5 bookings)
+    cur.execute("""
+        SELECT customer_email, shop_name, product_name, product_price, order_type, created_at
+        FROM bookings WHERE owner_email = %s ORDER BY created_at DESC LIMIT 5
+    """, (email,))
+    recent_bookings = cur.fetchall()
+    
+    # Recent ratings (last 5)
+    cur.execute("""
+        SELECT customer_email, shop_name, rating, review, created_at
+        FROM ratings WHERE owner_email = %s ORDER BY created_at DESC LIMIT 5
+    """, (email,))
+    recent_ratings = cur.fetchall()
+    
     cur.close()
     
-    return render_template("owner_dashboard.html", username=session['username'], active_businesses=active_businesses_count)
+    return render_template("owner_dashboard.html",
+        username=session['username'],
+        active_businesses=active_businesses_count,
+        total_earnings=total_earnings,
+        avg_rating=avg_rating,
+        total_bookings=total_bookings,
+        recent_bookings=recent_bookings,
+        recent_ratings=recent_ratings
+    )
 
 
 
@@ -166,6 +212,8 @@ def addbusiness():
         starting_time = request.form.get("starting_time")
         closing_time = request.form.get("closing_time")
         email = session['email']
+        latitude = request.form.get("latitude")
+        longitude = request.form.get("longitude")
 
         #getting the files uploaded by the user 
         image = request.files['image']
@@ -178,9 +226,12 @@ def addbusiness():
             filename = 'default.jpg'
 
         cur = mysql.connection.cursor()
+        latitude_val = f"'{latitude}'" if latitude else "NULL"
+        longitude_val = f"'{longitude}'" if longitude else "NULL"
+
         cur.execute(
-            f"INSERT INTO business_record (name,description,location,category,images,starting_time,closing_time,email,subcategory) "
-            f"VALUES ('{name}','{description}','{location}','{category}','{filename}','{starting_time}','{closing_time}','{email}','{subcategory}')"
+            f"INSERT INTO business_record (name,description,location,category,images,starting_time,closing_time,email,subcategory,latitude,longitude) "
+            f"VALUES ('{name}','{description}','{location}','{category}','{filename}','{starting_time}','{closing_time}','{email}','{subcategory}',{latitude_val},{longitude_val})"
         )
         mysql.connection.commit()
         cur.close()
@@ -199,7 +250,7 @@ def search():
 
     cur = mysql.connection.cursor()
     # Explicitly select columns to maintain consistent indexing even if table structure changes
-    sql = "SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record WHERE 1=1"
+    sql = "SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email, latitude, longitude FROM business_record WHERE 1=1"
     params = []
     
     if query:
@@ -207,7 +258,7 @@ def search():
         params.append(f"%{query}%")
         params.append(f"%{query}%")
 
-    if location and location != "":
+    if location and location != "" and location != "Nearby":
         sql += " AND location = %s"
         params.append(location)
 
@@ -220,7 +271,7 @@ def search():
         params.append(subcategory)
 
     if not params:
-        cur.execute("SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email FROM business_record LIMIT 6") 
+        cur.execute("SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, email, latitude, longitude FROM business_record LIMIT 50") 
         results_raw = cur.fetchall()
     else:
         cur.execute(sql, tuple(params))
@@ -238,7 +289,7 @@ def search():
         close_str = ""
         
         # With explicit SELECT:
-        # 0:id, 1:name, 2:description, 3:location, 4:category, 5:subcategory, 6:images, 7:starting_time, 8:closing_time, 9:email
+        # 0:id, 1:name, 2:description, 3:location, 4:category, 5:subcategory, 6:images, 7:starting_time, 8:closing_time, 9:email, 10:latitude, 11:longitude
         if len(row_list) > 8:
             start_td = row_list[7]
             close_td = row_list[8]
@@ -265,9 +316,7 @@ def search():
                 start_str = format_td(start_td)
                 close_str = format_td(close_td)
                 
-        # Append extra info: index 10 is is_open, 11 is start_str, 12 is close_str
-        while len(row_list) <= 9:
-            row_list.append(None)
+        # Append extra info: is_open, start_str, close_str
         row_list.append(is_open)
         row_list.append(start_str)
         row_list.append(close_str)
@@ -407,6 +456,158 @@ def shop_products(shop_name):
     cur.close()
     
     return render_template("shop_products.html", shop_name=shop_name, products=products, username=session.get('username'))
+
+
+@app.route('/my_businesses')
+def my_businesses():
+    if 'email' not in session:
+        return redirect('/login')
+    
+    email = session['email']
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        SELECT id, name, description, location, category, subcategory, images, starting_time, closing_time, latitude, longitude
+        FROM business_record WHERE email = %s ORDER BY id DESC
+    """, (email,))
+    businesses_raw = cur.fetchall()
+    
+    import datetime
+    businesses = []
+    for b in businesses_raw:
+        start_str = ''
+        close_str = ''
+        if b[7] and b[8]:
+            def format_td(td):
+                if isinstance(td, datetime.timedelta):
+                    total_seconds = int(td.total_seconds())
+                else:
+                    return str(td)
+                hours = total_seconds // 3600
+                minutes = (total_seconds % 3600) // 60
+                period = "AM"
+                if hours >= 12:
+                    period = "PM"
+                    if hours > 12:
+                        hours -= 12
+                if hours == 0:
+                    hours = 12
+                return f"{hours}:{minutes:02d} {period}"
+            start_str = format_td(b[7])
+            close_str = format_td(b[8])
+        
+        # Get booking count for this business
+        cur.execute("SELECT COUNT(*) FROM bookings WHERE shop_name = %s AND owner_email = %s", (b[1], email))
+        booking_count = cur.fetchone()[0]
+        
+        # Get avg rating for this business
+        cur.execute("SELECT AVG(rating) FROM ratings WHERE shop_name = %s AND owner_email = %s", (b[1], email))
+        rating_row = cur.fetchone()
+        biz_rating = round(float(rating_row[0]), 1) if rating_row and rating_row[0] else 0.0
+        
+        businesses.append({
+            'id': b[0],
+            'name': b[1],
+            'description': b[2],
+            'location': b[3],
+            'category': b[4],
+            'subcategory': b[5],
+            'image': b[6],
+            'start_time': start_str,
+            'close_time': close_str,
+            'bookings': booking_count,
+            'rating': biz_rating
+        })
+    
+    cur.close()
+    return render_template('my_businesses.html', username=session['username'], businesses=businesses)
+
+
+@app.route('/book_product', methods=['POST'])
+def book_product():
+    if 'email' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    data = request.json
+    customer_email = session['email']
+    shop_name = data.get('shop_name')
+    product_name = data.get('product_name')
+    order_type = data.get('order_type', 'online')
+    
+    cur = mysql.connection.cursor()
+    
+    # Get product price and owner email
+    cur.execute("SELECT price, owner_email, stock FROM products WHERE shop_name = %s AND product_name = %s", (shop_name, product_name))
+    product = cur.fetchone()
+    
+    if not product:
+        cur.close()
+        return jsonify({'success': False, 'message': 'Product not found'}), 404
+    
+    price = float(product[0])
+    owner_email = product[1]
+    stock = product[2]
+    
+    if stock <= 0:
+        cur.close()
+        return jsonify({'success': False, 'message': 'Out of stock'}), 400
+    
+    # Insert booking
+    cur.execute(
+        "INSERT INTO bookings (customer_email, owner_email, shop_name, product_name, product_price, order_type) VALUES (%s, %s, %s, %s, %s, %s)",
+        (customer_email, owner_email, shop_name, product_name, price, order_type)
+    )
+    
+    # Update owner earnings (INSERT or UPDATE)
+    cur.execute(
+        "INSERT INTO owner_earnings (owner_email, total_earnings) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_earnings = total_earnings + %s",
+        (owner_email, price, price)
+    )
+    
+    # Decrement stock
+    cur.execute("UPDATE products SET stock = stock - 1 WHERE shop_name = %s AND product_name = %s", (shop_name, product_name))
+    
+    mysql.connection.commit()
+    
+    # Get the booking ID
+    booking_id = cur.lastrowid
+    cur.close()
+    
+    return jsonify({'success': True, 'booking_id': booking_id, 'price': price, 'shop_name': shop_name})
+
+
+@app.route('/submit_rating', methods=['POST'])
+def submit_rating():
+    if 'email' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+    
+    data = request.json
+    customer_email = session['email']
+    shop_name = data.get('shop_name')
+    rating = data.get('rating')
+    review = data.get('review', '')
+    
+    if not rating or not shop_name:
+        return jsonify({'success': False, 'message': 'Missing data'}), 400
+    
+    # Get owner email from business_record
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT email FROM business_record WHERE name = %s LIMIT 1", (shop_name,))
+    biz = cur.fetchone()
+    
+    if not biz:
+        cur.close()
+        return jsonify({'success': False, 'message': 'Business not found'}), 404
+    
+    owner_email = biz[0]
+    
+    cur.execute(
+        "INSERT INTO ratings (customer_email, shop_name, owner_email, rating, review) VALUES (%s, %s, %s, %s, %s)",
+        (customer_email, shop_name, owner_email, rating, review)
+    )
+    mysql.connection.commit()
+    cur.close()
+    
+    return jsonify({'success': True})
 
 
 @app.route('/category')

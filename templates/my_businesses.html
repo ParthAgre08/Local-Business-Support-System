@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .my-biz-header {
+        text-align: center;
+        padding: 20px 20px 40px;
+    }
+    .my-biz-header .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #eef2ff, #f3e8ff);
+        border: 1px solid #e0e7ff;
+        color: #4f46e5;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+    .my-biz-header .badge span {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #4f46e5;
+    }
+    .my-biz-header h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px;
+        line-height: 1.2;
+    }
+    .my-biz-header h1 em {
+        font-style: normal;
+        background: linear-gradient(to right, #4f46e5, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .my-biz-header p {
+        color: #64748b;
+        font-size: 16px;
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .biz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 28px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+
+    .biz-card {
+        background: #fff;
+        border-radius: 24px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        transition: all 0.35s cubic-bezier(.4,0,.2,1);
+        position: relative;
+    }
+    .biz-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px -12px rgba(79,70,229,0.15);
+        border-color: #c7d2fe;
+    }
+
+    .biz-card-image {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+    .biz-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .biz-card:hover .biz-card-image img {
+        transform: scale(1.05);
+    }
+
+    .biz-card-image .category-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(8px);
+        font-size: 12px;
+        font-weight: 700;
+        color: #4f46e5;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .biz-stats-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        gap: 0;
+    }
+    .biz-stats-overlay .stat {
+        flex: 1;
+        padding: 8px 12px;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(8px);
+        color: white;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .biz-stats-overlay .stat .val {
+        font-size: 16px;
+        font-weight: 800;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .biz-card-body {
+        padding: 24px;
+    }
+    .biz-card-body h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 8px;
+    }
+
+    .biz-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .biz-meta .meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .biz-desc {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .biz-card-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .biz-card-actions a {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s;
+    }
+    .btn-view {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79,70,229,0.25);
+    }
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79,70,229,0.35);
+    }
+    .btn-products {
+        background: #f1f5f9;
+        color: #4f46e5;
+        border: 1px solid #e2e8f0;
+    }
+    .btn-products:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+    }
+
+    .biz-empty {
+        text-align: center;
+        padding: 80px 24px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .biz-empty .empty-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+    .biz-empty h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 8px;
+    }
+    .biz-empty p {
+        color: #64748b;
+        font-size: 15px;
+        margin: 0 0 24px;
+    }
+    .biz-empty a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+        transition: all 0.3s;
+    }
+    .biz-empty a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79,70,229,0.4);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        color: #4f46e5;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0 24px 20px;
+        transition: all 0.25s;
+    }
+    .back-link:hover {
+        background: #eef2ff;
+        transform: translateX(-4px);
+    }
+
+    @media (max-width: 640px) {
+        .biz-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<!-- Back link -->
+<a href="/owner_dashboard" class="back-link">← Back to Dashboard</a>
+
+<!-- Hero Header -->
+<div class="my-biz-header">
+    <div class="badge"><span></span> My Businesses</div>
+    <h1>Your <em>Registered Businesses</em></h1>
+    <p>Manage and view all the businesses you've registered on LocalHub. Track their performance at a glance.</p>
+</div>
+
+{% if businesses|length > 0 %}
+<!-- Business Cards Grid -->
+<div class="biz-grid">
+    {% for biz in businesses %}
+    <div class="biz-card">
+        <!-- Image -->
+        <div class="biz-card-image">
+            <img src="{{ url_for('static', filename='uploads/' + biz.image) }}" alt="{{ biz.name }}">
+            <div class="category-badge">{{ biz.category }}</div>
+            
+            <!-- Stats overlay on image -->
+            <div class="biz-stats-overlay">
+                <div class="stat">
+                    <span class="val">{{ biz.bookings }}</span>
+                    Bookings
+                </div>
+                <div class="stat">
+                    <span class="val">{% if biz.rating > 0 %}{{ biz.rating }}⭐{% else %}—{% endif %}</span>
+                    Rating
+                </div>
+                <div class="stat">
+                    <span class="val">{% if biz.start_time %}{{ biz.start_time }}{% else %}—{% endif %}</span>
+                    Opens
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="biz-card-body">
+            <h3>{{ biz.name }}</h3>
+            
+            <div class="biz-meta">
+                {% if biz.subcategory %}
+                <span class="meta-chip">🏷️ {{ biz.subcategory }}</span>
+                {% endif %}
+                <span class="meta-chip">📍 {{ biz.location }}</span>
+                {% if biz.start_time and biz.close_time %}
+                <span class="meta-chip">🕒 {{ biz.start_time }} - {{ biz.close_time }}</span>
+                {% endif %}
+            </div>
+
+            <p class="biz-desc">{{ biz.description }}</p>
+
+            <div class="biz-card-actions">
+                <a href="/shop/{{ biz.name }}/products" class="btn-view">📦 View Products</a>
+                <a href="/search?query={{ biz.name }}" class="btn-products">🔍 Public View</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Empty state -->
+<div class="biz-empty">
+    <div class="empty-icon">🏗️</div>
+    <h2>No businesses yet</h2>
+    <p>You haven't registered any businesses yet. Get started by adding your first business!</p>
+    <a href="/addbusiness">➕ Add Your First Business</a>
+</div>
+{% endif %}
+
+{% endblock %}

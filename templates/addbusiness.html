@@ -2,6 +2,8 @@
 
 {% block content %}
 <div class="addbusiness-wrapper">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <div class="addbusiness-card">
         <h2 class="addbusiness-title">Add New Business</h2>
         
@@ -94,7 +96,50 @@
             </script>
 
             <div class="form-group">
-                <label for="location">Location</label>
+                <label>Pin Location on Map</label>
+                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 10px; z-index: 1;"></div>
+                <small style="color: #666; font-size: 13px;">Click on the map to set the Exact Location of your business.</small>
+                <input type="hidden" id="latitude" name="latitude" required>
+                <input type="hidden" id="longitude" name="longitude" required>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var map = L.map('map').setView([18.5204, 73.8567], 11); // Default to Pune
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    var marker;
+
+                    map.on('click', function(e) {
+                        var lat = e.latlng.lat;
+                        var lng = e.latlng.lng;
+
+                        if (marker) {
+                            marker.setLatLng(e.latlng);
+                        } else {
+                            marker = L.marker(e.latlng).addTo(map);
+                        }
+
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+                    });
+
+                    // Try to get user's location setup map there
+                    if ("geolocation" in navigator) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var lat = position.coords.latitude;
+                            var lng = position.coords.longitude;
+                            map.setView([lat, lng], 13);
+                        });
+                    }
+                });
+            </script>
+
+            <div class="form-group">
+                <label for="location">Address / Location Name</label>
                 <div class="input-wrapper">
                     <input type="text" id="location" name="location" class="form-control" placeholder="Enter business location/address" required>
                 </div>
